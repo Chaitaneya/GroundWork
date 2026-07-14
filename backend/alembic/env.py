@@ -25,8 +25,9 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Autogenerate compares the live DB against these model definitions.
-# Import model modules here as they're created (Phase 1+) so their
-# tables register on Base.metadata before Alembic looks at it.
+# Importing app.models registers every table on Base.metadata.
+import app.models  # noqa: E402,F401
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

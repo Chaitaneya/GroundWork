@@ -13,5 +13,9 @@ class Settings(BaseSettings):
     database_url: str = ""
     cors_origins: list[str] = ["http://localhost:5173"]
 
+    # Signs JWTs — anyone holding this key can mint valid logins.
+    secret_key: str = "dev-only-insecure-secret"
+    access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
+
 
 settings = Settings()

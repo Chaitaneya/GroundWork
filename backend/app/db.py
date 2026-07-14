@@ -1,5 +1,7 @@
+from collections.abc import Generator
+
 from sqlalchemy import Engine, create_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from .config import settings
 
@@ -23,3 +25,14 @@ def get_engine() -> Engine:
         # connections when it scales to zero, so stale ones must be detected.
         _engine = create_engine(url, pool_pre_ping=True)
     return _engine
+
+
+# expire_on_commit=False lets us return ORM objects from endpoints after
+# committing without SQLAlchemy re-fetching every attribute.
+SessionLocal = sessionmaker(autoflush=False, expire_on_commit=False)
+
+
+def get_db() -> Generator[Session, None, None]:
+    """FastAPI dependency: one database session per request, always closed."""
+    with SessionLocal(bind=get_engine()) as session:
+        yield session
