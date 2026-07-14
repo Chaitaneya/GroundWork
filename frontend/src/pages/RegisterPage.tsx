@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ApiError, registerUser } from "../api";
 import { useAuth } from "../auth";
+import PasswordInput from "../components/PasswordInput";
 
 export default function RegisterPage() {
   const { signIn } = useAuth();
@@ -9,11 +10,18 @@ export default function RegisterPage() {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const mismatch = confirm.length > 0 && confirm !== password;
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    if (password !== confirm) {
+      setError("Passwords do not match");
+      return;
+    }
     setError(null);
     setBusy(true);
     try {
@@ -57,19 +65,29 @@ export default function RegisterPage() {
             <span className="mb-1 block text-sm font-medium text-slate-700">
               Password <span className="font-normal text-slate-400">(min 8 characters)</span>
             </span>
-            <input
-              type="password"
-              required
-              minLength={8}
+            <PasswordInput
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none"
+              onChange={setPassword}
+              minLength={8}
+              autoComplete="new-password"
             />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-sm font-medium text-slate-700">Confirm password</span>
+            <PasswordInput
+              value={confirm}
+              onChange={setConfirm}
+              minLength={8}
+              autoComplete="new-password"
+            />
+            {mismatch && (
+              <p className="mt-1 text-sm text-rose-600">Passwords do not match</p>
+            )}
           </label>
           {error && <p className="text-sm text-rose-600">{error}</p>}
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || mismatch}
             className="w-full rounded-lg bg-indigo-600 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             {busy ? "Creating…" : "Create account"}

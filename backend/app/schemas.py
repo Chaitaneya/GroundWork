@@ -46,6 +46,7 @@ class SubjectOut(BaseModel):
     name: str
     description: str
     created_at: datetime
+    topic_count: int = 0
 
 
 class TopicCreate(BaseModel):

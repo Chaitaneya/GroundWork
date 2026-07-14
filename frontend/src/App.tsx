@@ -1,4 +1,16 @@
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
+
+function NotFoundPage() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+      <h1 className="text-5xl font-bold text-slate-300">404</h1>
+      <p className="mt-2 text-slate-600">This page doesn't exist.</p>
+      <Link to="/" className="mt-4 font-medium text-indigo-600 hover:underline">
+        ← Back to your subjects
+      </Link>
+    </main>
+  );
+}
 import { AuthProvider, RequireAuth, useAuth } from "./auth";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -48,6 +60,7 @@ export default function App() {
             <Route index element={<SubjectsPage />} />
             <Route path="/subjects/:subjectId" element={<SubjectPage />} />
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

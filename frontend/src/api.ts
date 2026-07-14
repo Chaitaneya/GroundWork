@@ -28,6 +28,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
   const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
+  // A 401 while we HOLD a token means the token expired or was revoked —
+  // drop it and send the user to login instead of every action silently
+  // failing. (A 401 with no token is just a wrong password on /login.)
+  if (res.status === 401 && token) {
+    setToken(null);
+    window.location.assign("/login");
+  }
   if (!res.ok) {
     let detail = `Request failed (${res.status})`;
     try {
@@ -50,6 +57,14 @@ function postJson<T>(path: string, body: unknown): Promise<T> {
   });
 }
 
+function patchJson<T>(path: string, body: unknown): Promise<T> {
+  return request<T>(path, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
 // ---------- types (mirror the backend's response schemas) ----------
 
 export interface User {
@@ -63,6 +78,7 @@ export interface Subject {
   name: string;
   description: string;
   created_at: string;
+  topic_count: number;
 }
 
 export interface Topic {
@@ -116,6 +132,8 @@ export const createSubject = (name: string, description: string) =>
   postJson<Subject>("/api/subjects", { name, description });
 export const deleteSubject = (id: number) =>
   request<void>(`/api/subjects/${id}`, { method: "DELETE" });
+export const updateSubject = (id: number, fields: { name?: string; description?: string }) =>
+  patchJson<Subject>(`/api/subjects/${id}`, fields);
 
 export const listTopics = (subjectId: number) =>
   request<Topic[]>(`/api/subjects/${subjectId}/topics`);
@@ -123,6 +141,8 @@ export const createTopic = (subjectId: number, name: string, description: string
   postJson<Topic>(`/api/subjects/${subjectId}/topics`, { name, description });
 export const deleteTopic = (id: number) =>
   request<void>(`/api/topics/${id}`, { method: "DELETE" });
+export const updateTopic = (id: number, fields: { name?: string; description?: string }) =>
+  patchJson<Topic>(`/api/topics/${id}`, fields);
 
 // ---------- status page ----------
 

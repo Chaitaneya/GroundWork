@@ -6,9 +6,16 @@ import {
   deleteTopic,
   getSubject,
   listTopics,
+  updateTopic,
   type Subject,
   type Topic,
 } from "../api";
+
+interface Draft {
+  id: number;
+  name: string;
+  description: string;
+}
 
 export default function SubjectPage() {
   const { subjectId } = useParams();
@@ -18,6 +25,7 @@ export default function SubjectPage() {
   const [topics, setTopics] = useState<Topic[] | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [draft, setDraft] = useState<Draft | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,6 +54,22 @@ export default function SubjectPage() {
     if (!confirm("Delete this topic?")) return;
     await deleteTopic(topicId);
     setTopics((prev) => (prev ?? []).filter((t) => t.id !== topicId));
+  }
+
+  async function onSaveEdit(e: FormEvent) {
+    e.preventDefault();
+    if (!draft) return;
+    setError(null);
+    try {
+      const updated = await updateTopic(draft.id, {
+        name: draft.name.trim(),
+        description: draft.description.trim(),
+      });
+      setTopics((prev) => (prev ?? []).map((t) => (t.id === updated.id ? updated : t)));
+      setDraft(null);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Could not reach the server");
+    }
   }
 
   if (error && !subject) {
@@ -77,21 +101,68 @@ export default function SubjectPage() {
           {(topics ?? []).map((t) => (
             <li
               key={t.id}
-              className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
             >
-              <div className="min-w-0">
-                <p className="font-medium text-slate-900">{t.name}</p>
-                {t.description && (
-                  <p className="truncate text-sm text-slate-500">{t.description}</p>
-                )}
-              </div>
-              <button
-                onClick={() => onDelete(t.id)}
-                className="ml-3 text-sm text-slate-400 hover:text-rose-600"
-                title="Delete topic"
-              >
-                ✕
-              </button>
+              {draft?.id === t.id ? (
+                <form onSubmit={onSaveEdit} className="space-y-2">
+                  <input
+                    required
+                    maxLength={200}
+                    value={draft.name}
+                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-1.5 focus:border-indigo-500 focus:outline-none"
+                  />
+                  <input
+                    maxLength={2000}
+                    placeholder="Description (optional)"
+                    value={draft.description}
+                    onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+                    className="w-full rounded-lg border border-slate-300 px-3 py-1.5 focus:border-indigo-500 focus:outline-none"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDraft(null)}
+                      className="rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="font-medium text-slate-900">{t.name}</p>
+                    {t.description && (
+                      <p className="truncate text-sm text-slate-500">{t.description}</p>
+                    )}
+                  </div>
+                  <div className="ml-3 flex gap-2">
+                    <button
+                      onClick={() =>
+                        setDraft({ id: t.id, name: t.name, description: t.description })
+                      }
+                      className="text-sm text-slate-400 hover:text-indigo-600"
+                      title="Edit topic"
+                    >
+                      ✎
+                    </button>
+                    <button
+                      onClick={() => onDelete(t.id)}
+                      className="text-sm text-slate-400 hover:text-rose-600"
+                      title="Delete topic"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>

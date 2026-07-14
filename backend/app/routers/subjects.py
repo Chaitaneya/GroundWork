@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from ..deps import CurrentUser, DbSession
-from ..models import Subject
+from ..models import Subject, Topic
 from ..schemas import SubjectCreate, SubjectOut, SubjectUpdate
 
 router = APIRouter(prefix="/api/subjects", tags=["subjects"])
@@ -24,9 +24,25 @@ def get_owned_subject(db: DbSession, user_id: int, subject_id: int) -> Subject:
 
 @router.get("", response_model=list[SubjectOut])
 def list_subjects(user: CurrentUser, db: DbSession):
-    return db.scalars(
-        select(Subject).where(Subject.user_id == user.id).order_by(Subject.created_at)
+    # One query for subjects AND their topic counts: LEFT JOIN so subjects
+    # with zero topics still appear, GROUP BY to count per subject.
+    rows = db.execute(
+        select(Subject, func.count(Topic.id))
+        .outerjoin(Topic)
+        .where(Subject.user_id == user.id)
+        .group_by(Subject.id)
+        .order_by(Subject.created_at)
     ).all()
+    return [
+        SubjectOut(
+            id=s.id,
+            name=s.name,
+            description=s.description,
+            created_at=s.created_at,
+            topic_count=count,
+        )
+        for s, count in rows
+    ]
 
 
 @router.post("", response_model=SubjectOut, status_code=status.HTTP_201_CREATED)
