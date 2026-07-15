@@ -5,6 +5,7 @@ import {
   startGeneration,
   type GenerationJob,
   type GenerationKind,
+  type QuizDifficulty,
 } from "../api";
 
 const KIND_LABEL: Record<GenerationKind, string> = {
@@ -52,6 +53,7 @@ export default function GenerateBar({
 }) {
   const [job, setJob] = useState<GenerationJob | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [difficulty, setDifficulty] = useState<QuizDifficulty>("standard");
   const [error, setError] = useState<string | null>(null);
 
   const active = job !== null && (job.status === "queued" || job.status === "running");
@@ -79,7 +81,7 @@ export default function GenerateBar({
     setError(null);
     setElapsed(0);
     try {
-      setJob(await startGeneration(topicId, kind));
+      setJob(await startGeneration(topicId, kind, 10, difficulty));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Could not reach the server");
     }
@@ -98,6 +100,18 @@ export default function GenerateBar({
         >
           {active ? "Generating…" : `✨ Generate ${KIND_LABEL[kind]} from documents`}
         </button>
+        {kind === "quiz" && !active && (
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
+            className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+            title="Quiz difficulty"
+          >
+            <option value="intro">Intro</option>
+            <option value="standard">Standard</option>
+            <option value="exam">Exam-level</option>
+          </select>
+        )}
         {!active && (
           <p className="text-xs text-slate-500">
             Grounded in this topic's uploaded material — every item cites its source passages.

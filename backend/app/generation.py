@@ -40,7 +40,9 @@ def _valid_question_shape(q: ai.GenQuestion) -> bool:
     return bool(q.answer_text and q.answer_text.strip())
 
 
-def run_generation_job(job_id: int, count: int = DEFAULT_COUNT) -> None:
+def run_generation_job(
+    job_id: int, count: int = DEFAULT_COUNT, difficulty: str = "standard"
+) -> None:
     with SessionLocal(bind=get_engine()) as db:
         job = db.get(GenerationJob, job_id)
         if job is None:
@@ -115,7 +117,8 @@ def run_generation_job(job_id: int, count: int = DEFAULT_COUNT) -> None:
                     ).all()
                 )
                 gen_quiz = ai.generate_structured(
-                    ai.quiz_prompt(topic, context, count, missed_prompts), ai.GenQuiz
+                    ai.quiz_prompt(topic, context, count, missed_prompts, difficulty),
+                    ai.GenQuiz,
                 )
                 quiz = Quiz(topic_id=topic.id, title=gen_quiz.title, origin="ai", pending=True)
                 db.add(quiz)

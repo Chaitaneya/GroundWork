@@ -255,6 +255,7 @@ class AttemptOut(BaseModel):
 class GenerateRequest(BaseModel):
     kind: Literal["notes", "flashcards", "quiz"]
     count: int = Field(default=10, ge=1, le=20)
+    difficulty: Literal["intro", "standard", "exam"] = "standard"  # quizzes only
 
 
 class PendingBulkRequest(BaseModel):

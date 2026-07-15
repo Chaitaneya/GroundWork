@@ -49,7 +49,7 @@ def start_generation(
     job = GenerationJob(topic_id=topic_id, kind=body.kind)
     db.add(job)
     db.commit()
-    background_tasks.add_task(run_generation_job, job.id, body.count)
+    background_tasks.add_task(run_generation_job, job.id, body.count, body.difficulty)
     return job
 
 

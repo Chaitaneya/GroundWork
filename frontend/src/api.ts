@@ -330,8 +330,14 @@ export interface GenerationJob {
   finished_at: string | null;
 }
 
-export const startGeneration = (topicId: number, kind: GenerationKind, count = 10) =>
-  postJson<GenerationJob>(`/api/topics/${topicId}/generate`, { kind, count });
+export type QuizDifficulty = "intro" | "standard" | "exam";
+
+export const startGeneration = (
+  topicId: number,
+  kind: GenerationKind,
+  count = 10,
+  difficulty: QuizDifficulty = "standard",
+) => postJson<GenerationJob>(`/api/topics/${topicId}/generate`, { kind, count, difficulty });
 export const listGenerationJobs = (topicId: number) =>
   request<GenerationJob[]>(`/api/topics/${topicId}/generation-jobs`);
 

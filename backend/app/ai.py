@@ -171,8 +171,23 @@ STUDY MATERIAL:
 {context}"""
 
 
+DIFFICULTY_GUIDANCE = {
+    "intro": "Difficulty: INTRODUCTORY — test definitions and basic recognition. "
+    "Direct questions, obviously-wrong distractors.",
+    "standard": "Difficulty: STANDARD — mix recall with understanding. "
+    "Plausible distractors that test real comprehension.",
+    "exam": "Difficulty: EXAM-LEVEL — application and analysis, not recall. Use "
+    "scenarios ('what happens if…'), subtle distractors that are wrong for a "
+    "specific reason, and questions combining multiple ideas from the material.",
+}
+
+
 def quiz_prompt(
-    topic: Topic, context: str, count: int, missed_prompts: list[str] | None = None
+    topic: Topic,
+    context: str,
+    count: int,
+    missed_prompts: list[str] | None = None,
+    difficulty: str = "standard",
 ) -> str:
     # Adaptive bias: if the student has recently answered questions wrong,
     # steer the new quiz toward those ideas (still grounded in the material).
@@ -186,7 +201,9 @@ the exact same questions):
 {missed}
 """
     return f"""You are writing a quiz for the topic "{topic.name}".
-{GROUNDING_RULES}{weakness_section}
+{GROUNDING_RULES}
+{DIFFICULTY_GUIDANCE.get(difficulty, DIFFICULTY_GUIDANCE["standard"])}
+{weakness_section}
 Create 1 quiz with up to {count} questions: a mix of multiple-choice (4 options,
 exactly one correct), true/false (options "True" and "False", exactly one correct),
 and short-answer (a short factual answer in answer_text). Every question gets a
