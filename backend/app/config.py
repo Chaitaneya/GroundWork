@@ -19,7 +19,9 @@ class Settings(BaseSettings):
 
     # Gemini (Phase 4). Empty key = AI features cleanly disabled.
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash"
+    # "-latest" alias: tracks the current flash model so retired model names
+    # (like gemini-2.5-flash, which broke us once) can't strand the app.
+    gemini_model: str = "gemini-flash-latest"
     embedding_model: str = "gemini-embedding-001"
     embedding_dim: int = 768  # changing this means re-embedding every chunk
 
