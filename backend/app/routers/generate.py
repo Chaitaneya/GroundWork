@@ -1,16 +1,19 @@
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import delete, select, update
 
 from ..deps import CurrentUser, DbSession
 from ..generation import run_generation_job
 from ..models import (
     DocumentChunk,
+    Flashcard,
     FlashcardSource,
     GenerationJob,
+    Note,
     NoteSource,
     QuestionSource,
+    Quiz,
 )
-from ..schemas import ChunkOut, GenerateRequest, GenerationJobOut
+from ..schemas import ChunkOut, GenerateRequest, GenerationJobOut, PendingBulkRequest
 from .flashcards import get_owned_flashcard
 from .notes import get_owned_note
 from .quizzes import get_owned_quiz
@@ -63,6 +66,32 @@ def list_generation_jobs(topic_id: int, user: CurrentUser, db: DbSession):
 
 # ---------- accept pending AI items ----------
 # Accept = pending -> False. Discard = the existing DELETE endpoints.
+
+_PENDING_MODELS = {"flashcards": Flashcard, "notes": Note, "quiz": Quiz}
+
+
+@router.post("/topics/{topic_id}/pending/accept-all", status_code=status.HTTP_204_NO_CONTENT)
+def accept_all_pending(
+    topic_id: int, body: PendingBulkRequest, user: CurrentUser, db: DbSession
+):
+    get_owned_topic(db, user.id, topic_id)
+    model = _PENDING_MODELS[body.kind]
+    db.execute(
+        update(model)
+        .where(model.topic_id == topic_id, model.pending.is_(True))
+        .values(pending=False)
+    )
+    db.commit()
+
+
+@router.post("/topics/{topic_id}/pending/discard-all", status_code=status.HTTP_204_NO_CONTENT)
+def discard_all_pending(
+    topic_id: int, body: PendingBulkRequest, user: CurrentUser, db: DbSession
+):
+    get_owned_topic(db, user.id, topic_id)
+    model = _PENDING_MODELS[body.kind]
+    db.execute(delete(model).where(model.topic_id == topic_id, model.pending.is_(True)))
+    db.commit()
 
 
 @router.post("/flashcards/{flashcard_id}/accept", status_code=status.HTTP_204_NO_CONTENT)

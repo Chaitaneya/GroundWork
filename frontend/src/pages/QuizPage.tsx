@@ -16,7 +16,10 @@ import {
   type QuizDetail,
 } from "../api";
 
-type Mode = "manage" | "take" | "result";
+// Mode rules (standard quiz UX): correct answers are visible ONLY in
+// "edit" (the owner deliberately editing) and "result" (after submitting).
+// "overview" and "take" never reveal them.
+type Mode = "overview" | "edit" | "take" | "result";
 
 const EMPTY_OPTIONS = ["", "", "", ""];
 
@@ -155,7 +158,7 @@ export default function QuizPage() {
 
   const [quiz, setQuiz] = useState<QuizDetail | null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
-  const [mode, setMode] = useState<Mode>("manage");
+  const [mode, setMode] = useState<Mode>("overview");
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [result, setResult] = useState<AttemptResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -166,6 +169,12 @@ export default function QuizPage() {
   }, [id]);
 
   useEffect(reload, [reload]);
+
+  function startTaking() {
+    setAnswers({});
+    setResult(null);
+    setMode("take");
+  }
 
   async function onSubmitAttempt() {
     if (!quiz) return;
@@ -189,6 +198,7 @@ export default function QuizPage() {
   }
   if (!quiz) return <p className="text-slate-500">Loading…</p>;
 
+  const revealAnswers = mode === "edit"; // never in overview/take
   const resultFor = (qid: number) => result?.results.find((r) => r.question_id === qid);
 
   return (
@@ -198,24 +208,62 @@ export default function QuizPage() {
           ← Back to topic
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-2xl font-bold text-slate-900">{quiz.title}</h2>
-          {mode === "manage" && quiz.questions.length > 0 && (
-            <button
-              onClick={() => {
-                setAnswers({});
-                setResult(null);
-                setMode("take");
-              }}
-              className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
-            >
-              Take quiz
-            </button>
-          )}
-          {mode !== "manage" && (
-            <button onClick={() => setMode("manage")} className="text-sm text-slate-500 hover:text-slate-900">
-              Exit to editing
-            </button>
-          )}
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">{quiz.title}</h2>
+            <p className="text-sm text-slate-500">
+              {quiz.questions.length} question{quiz.questions.length === 1 ? "" : "s"}
+              {mode === "edit" && " · editing (correct answers visible)"}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            {mode === "overview" && (
+              <>
+                {quiz.questions.length > 0 && (
+                  <button
+                    onClick={startTaking}
+                    className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+                  >
+                    Take quiz
+                  </button>
+                )}
+                <button
+                  onClick={() => setMode("edit")}
+                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Edit
+                </button>
+              </>
+            )}
+            {mode === "edit" && (
+              <button
+                onClick={() => setMode("overview")}
+                className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+              >
+                Done editing
+              </button>
+            )}
+            {mode === "take" && (
+              <button onClick={() => setMode("overview")} className="text-sm text-slate-500 hover:text-slate-900">
+                Cancel
+              </button>
+            )}
+            {mode === "result" && (
+              <div className="flex gap-2">
+                <button
+                  onClick={startTaking}
+                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Retake
+                </button>
+                <button
+                  onClick={() => setMode("overview")}
+                  className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+                >
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         {mode === "result" && result && (
           <p className="mt-2 text-lg font-semibold text-slate-900">
@@ -223,6 +271,12 @@ export default function QuizPage() {
           </p>
         )}
       </div>
+
+      {quiz.questions.length === 0 && mode !== "edit" && (
+        <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
+          This quiz has no questions yet — hit Edit to add some.
+        </p>
+      )}
 
       <ol className="space-y-4">
         {quiz.questions.map((q, qi) => {
@@ -235,7 +289,7 @@ export default function QuizPage() {
                 <p className="font-medium text-slate-900">
                   {qi + 1}. {q.prompt}
                 </p>
-                {mode === "manage" && (
+                {mode === "edit" && (
                   <button
                     onClick={async () => {
                       if (!confirm("Delete this question?")) return;
@@ -258,7 +312,7 @@ export default function QuizPage() {
                       key={o.id}
                       className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
                         mode === "take" ? "cursor-pointer hover:bg-slate-50" : ""
-                      } ${mode === "manage" && o.is_correct ? "bg-emerald-50 font-medium text-emerald-800" : "text-slate-700"} ${
+                      } ${revealAnswers && o.is_correct ? "bg-emerald-50 font-medium text-emerald-800" : "text-slate-700"} ${
                         r && answers[q.id] === String(o.id) ? (r.is_correct ? "bg-emerald-50" : "bg-rose-50") : ""
                       }`}
                     >
@@ -270,7 +324,7 @@ export default function QuizPage() {
                           onChange={() => setAnswers({ ...answers, [q.id]: String(o.id) })}
                         />
                       ) : (
-                        <span className="w-4 text-center">{mode === "manage" && o.is_correct ? "✓" : "·"}</span>
+                        <span className="w-4 text-center">{revealAnswers && o.is_correct ? "✓" : "·"}</span>
                       )}
                       {o.option_text}
                     </label>
@@ -285,11 +339,17 @@ export default function QuizPage() {
                 />
               ) : (
                 <p className="mt-2 text-sm text-slate-500">
-                  {mode === "manage" ? <>Answer: <span className="font-medium text-slate-700">{q.answer_text}</span></> : `Your answer: ${answers[q.id] || "—"}`}
+                  {revealAnswers ? (
+                    <>Answer: <span className="font-medium text-slate-700">{q.answer_text}</span></>
+                  ) : mode === "result" ? (
+                    `Your answer: ${answers[q.id] || "—"}`
+                  ) : (
+                    "Short-answer question"
+                  )}
                 </p>
               )}
 
-              {mode === "manage" && q.origin === "ai" && (
+              {mode === "edit" && q.origin === "ai" && (
                 <div className="mt-3">
                   <SourcesView fetch={() => fetchQuestionSources(q.id)} />
                 </div>
@@ -315,22 +375,19 @@ export default function QuizPage() {
         </button>
       )}
 
-      {mode === "manage" && (
-        <>
-          <QuestionForm quizId={id} onAdded={() => reload()} />
-          {attempts.length > 0 && (
-            <section>
-              <h4 className="mb-2 font-semibold text-slate-900">Past attempts</h4>
-              <ul className="space-y-1 text-sm text-slate-600">
-                {attempts.map((a) => (
-                  <li key={a.id}>
-                    {new Date(a.started_at).toLocaleString()} — <span className="font-medium">{a.score_pct}%</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-        </>
+      {mode === "edit" && <QuestionForm quizId={id} onAdded={() => reload()} />}
+
+      {mode === "overview" && attempts.length > 0 && (
+        <section>
+          <h4 className="mb-2 font-semibold text-slate-900">Past attempts</h4>
+          <ul className="space-y-1 text-sm text-slate-600">
+            {attempts.map((a) => (
+              <li key={a.id}>
+                {new Date(a.started_at).toLocaleString()} — <span className="font-medium">{a.score_pct}%</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );

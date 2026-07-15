@@ -335,6 +335,11 @@ export const startGeneration = (topicId: number, kind: GenerationKind, count = 1
 export const listGenerationJobs = (topicId: number) =>
   request<GenerationJob[]>(`/api/topics/${topicId}/generation-jobs`);
 
+export const acceptAllPending = (topicId: number, kind: GenerationKind) =>
+  postJson<void>(`/api/topics/${topicId}/pending/accept-all`, { kind });
+export const discardAllPending = (topicId: number, kind: GenerationKind) =>
+  postJson<void>(`/api/topics/${topicId}/pending/discard-all`, { kind });
+
 export const acceptFlashcard = (id: number) =>
   request<void>(`/api/flashcards/${id}/accept`, { method: "POST" });
 export const acceptNote = (id: number) =>

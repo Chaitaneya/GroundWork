@@ -257,6 +257,10 @@ class GenerateRequest(BaseModel):
     count: int = Field(default=10, ge=1, le=20)
 
 
+class PendingBulkRequest(BaseModel):
+    kind: Literal["notes", "flashcards", "quiz"]
+
+
 class GenerationJobOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

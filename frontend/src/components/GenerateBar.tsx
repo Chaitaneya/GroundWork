@@ -13,8 +13,34 @@ const KIND_LABEL: Record<GenerationKind, string> = {
   quiz: "a quiz",
 };
 
-/** "Generate with AI" trigger + live status of the latest job of this kind.
- *  Polls while a job runs; calls onDone() when new items are ready. */
+// Staged status messages, advanced by elapsed time — tells the user what's
+// actually happening during the 10-30s a generation takes.
+const STAGES: Record<GenerationKind, string[]> = {
+  flashcards: [
+    "Reading your study material…",
+    "Finding the most relevant passages…",
+    "Writing flashcards grounded in your documents…",
+    "Checking every card against its sources…",
+    "Almost done…",
+  ],
+  notes: [
+    "Reading your study material…",
+    "Finding the most relevant passages…",
+    "Writing structured notes from your documents…",
+    "Checking the note against its sources…",
+    "Almost done…",
+  ],
+  quiz: [
+    "Reading your study material…",
+    "Finding the most relevant passages…",
+    "Writing quiz questions from your documents…",
+    "Verifying answers against the sources…",
+    "Almost done…",
+  ],
+};
+
+const STAGE_SECONDS = 6; // advance to the next message every N seconds
+
 export default function GenerateBar({
   topicId,
   kind,
@@ -25,31 +51,42 @@ export default function GenerateBar({
   onDone: () => void;
 }) {
   const [job, setJob] = useState<GenerationJob | null>(null);
+  const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const active = job !== null && (job.status === "queued" || job.status === "running");
 
+  // poll the job while it runs
   useEffect(() => {
     if (!active) return;
     const timer = setInterval(async () => {
       const jobs = await listGenerationJobs(topicId);
       const latest = jobs.find((j) => j.kind === kind) ?? null;
       setJob(latest);
-      if (latest && latest.status !== "queued" && latest.status !== "running") {
-        if (latest.status === "done") onDone();
-      }
+      if (latest?.status === "done") onDone();
     }, 2500);
     return () => clearInterval(timer);
   }, [active, topicId, kind, onDone]);
 
+  // tick the elapsed clock for staged messages
+  useEffect(() => {
+    if (!active) return;
+    const timer = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(timer);
+  }, [active]);
+
   async function onGenerate() {
     setError(null);
+    setElapsed(0);
     try {
       setJob(await startGeneration(topicId, kind));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Could not reach the server");
     }
   }
+
+  const stages = STAGES[kind];
+  const stage = stages[Math.min(Math.floor(elapsed / STAGE_SECONDS), stages.length - 1)];
 
   return (
     <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
@@ -61,10 +98,23 @@ export default function GenerateBar({
         >
           {active ? "Generating…" : `✨ Generate ${KIND_LABEL[kind]} from documents`}
         </button>
-        <p className="text-xs text-slate-500">
-          Grounded in this topic's uploaded material — every item cites its source passages.
-        </p>
+        {!active && (
+          <p className="text-xs text-slate-500">
+            Grounded in this topic's uploaded material — every item cites its source passages.
+          </p>
+        )}
       </div>
+
+      {active && (
+        <div className="mt-3">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-indigo-100">
+            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-indigo-500" />
+          </div>
+          <p className="mt-2 text-sm text-indigo-800">{stage}</p>
+          <style>{`@keyframes slide { 0% { margin-left: -33% } 100% { margin-left: 100% } }`}</style>
+        </div>
+      )}
+
       {job?.status === "done" && (
         <p className="mt-2 text-sm text-emerald-700">
           Created {job.created_count} item{job.created_count === 1 ? "" : "s"} for your review

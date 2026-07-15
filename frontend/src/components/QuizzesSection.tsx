@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { acceptQuiz, ApiError, createQuiz, deleteQuiz, listQuizzes, type Quiz } from "../api";
 import GenerateBar from "./GenerateBar";
+import PendingBanner from "./PendingBanner";
 
 export default function QuizzesSection({ topicId }: { topicId: number }) {
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -42,6 +43,13 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
   return (
     <div className="space-y-6">
       <GenerateBar topicId={topicId} kind="quiz" onDone={load} />
+      <PendingBanner
+        topicId={topicId}
+        kind="quiz"
+        label="quizzes"
+        count={(quizzes ?? []).filter((q) => q.pending).length}
+        onChanged={load}
+      />
       {quizzes === null && <p className="text-slate-500">Loading…</p>}
       {quizzes !== null && quizzes.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">

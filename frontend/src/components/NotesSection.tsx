@@ -11,6 +11,7 @@ import {
   type Note,
 } from "../api";
 import GenerateBar from "./GenerateBar";
+import PendingBanner from "./PendingBanner";
 import SourcesView from "./SourcesView";
 
 export default function NotesSection({ topicId }: { topicId: number }) {
@@ -67,6 +68,13 @@ export default function NotesSection({ topicId }: { topicId: number }) {
   return (
     <div className="space-y-6">
       <GenerateBar topicId={topicId} kind="notes" onDone={load} />
+      <PendingBanner
+        topicId={topicId}
+        kind="notes"
+        label="notes"
+        count={(notes ?? []).filter((n) => n.pending).length}
+        onChanged={load}
+      />
       {notes === null && <p className="text-slate-500">Loading…</p>}
       {notes !== null && notes.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">

@@ -10,6 +10,7 @@ import {
   type Flashcard,
 } from "../api";
 import GenerateBar from "./GenerateBar";
+import PendingBanner from "./PendingBanner";
 import SourcesView from "./SourcesView";
 
 function dueLabel(card: Flashcard): string {
@@ -75,6 +76,13 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
   return (
     <div className="space-y-6">
       <GenerateBar topicId={topicId} kind="flashcards" onDone={load} />
+      <PendingBanner
+        topicId={topicId}
+        kind="flashcards"
+        label="flashcards"
+        count={(cards ?? []).filter((c) => c.pending).length}
+        onChanged={load}
+      />
       {cards === null && <p className="text-slate-500">Loading…</p>}
       {cards !== null && cards.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
