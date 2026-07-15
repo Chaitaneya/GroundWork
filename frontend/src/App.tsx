@@ -17,6 +17,7 @@ import RegisterPage from "./pages/RegisterPage";
 import StatusPage from "./pages/StatusPage";
 import SubjectPage from "./pages/SubjectPage";
 import SubjectsPage from "./pages/SubjectsPage";
+import TopicPage from "./pages/TopicPage";
 
 function Layout() {
   const { user, signOut } = useAuth();
@@ -59,6 +60,7 @@ export default function App() {
           >
             <Route index element={<SubjectsPage />} />
             <Route path="/subjects/:subjectId" element={<SubjectPage />} />
+            <Route path="/topics/:topicId" element={<TopicPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

@@ -137,12 +137,12 @@ export default function SubjectPage() {
                 </form>
               ) : (
                 <div className="flex items-center justify-between">
-                  <div className="min-w-0">
-                    <p className="font-medium text-slate-900">{t.name}</p>
+                  <Link to={`/topics/${t.id}`} className="min-w-0 flex-1">
+                    <p className="font-medium text-slate-900 hover:text-indigo-700">{t.name}</p>
                     {t.description && (
                       <p className="truncate text-sm text-slate-500">{t.description}</p>
                     )}
-                  </div>
+                  </Link>
                   <div className="ml-3 flex gap-2">
                     <button
                       onClick={() =>

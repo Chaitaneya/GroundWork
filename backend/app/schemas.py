@@ -68,3 +68,26 @@ class TopicOut(BaseModel):
     description: str
     position: int
     created_at: datetime
+
+
+class DocumentOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    topic_id: int
+    title: str
+    original_filename: str
+    status: str  # processing | ready | failed
+    page_count: int
+    error: str | None = None
+    created_at: datetime
+    chunk_count: int = 0
+
+
+class ChunkOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    chunk_index: int
+    page_number: int
+    content: str

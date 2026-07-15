@@ -90,6 +90,25 @@ export interface Topic {
   created_at: string;
 }
 
+export interface Document {
+  id: number;
+  topic_id: number;
+  title: string;
+  original_filename: string;
+  status: "processing" | "ready" | "failed";
+  page_count: number;
+  error: string | null;
+  created_at: string;
+  chunk_count: number;
+}
+
+export interface Chunk {
+  id: number;
+  chunk_index: number;
+  page_number: number;
+  content: string;
+}
+
 export interface HealthResponse {
   status: string;
   app: string;
@@ -135,6 +154,7 @@ export const deleteSubject = (id: number) =>
 export const updateSubject = (id: number, fields: { name?: string; description?: string }) =>
   patchJson<Subject>(`/api/subjects/${id}`, fields);
 
+export const getTopic = (id: number) => request<Topic>(`/api/topics/${id}`);
 export const listTopics = (subjectId: number) =>
   request<Topic[]>(`/api/subjects/${subjectId}/topics`);
 export const createTopic = (subjectId: number, name: string, description: string) =>
@@ -143,6 +163,26 @@ export const deleteTopic = (id: number) =>
   request<void>(`/api/topics/${id}`, { method: "DELETE" });
 export const updateTopic = (id: number, fields: { name?: string; description?: string }) =>
   patchJson<Topic>(`/api/topics/${id}`, fields);
+
+// ---------- documents & chunks ----------
+
+export function uploadDocument(topicId: number, file: File): Promise<Document> {
+  const form = new FormData();
+  form.append("file", file);
+  // No Content-Type header here — the browser sets multipart/form-data
+  // with the boundary itself. Setting it manually breaks the upload.
+  return request<Document>(`/api/topics/${topicId}/documents`, {
+    method: "POST",
+    body: form,
+  });
+}
+
+export const listDocuments = (topicId: number) =>
+  request<Document[]>(`/api/topics/${topicId}/documents`);
+export const deleteDocument = (id: number) =>
+  request<void>(`/api/documents/${id}`, { method: "DELETE" });
+export const listDocumentChunks = (documentId: number) =>
+  request<Chunk[]>(`/api/documents/${documentId}/chunks`);
 
 // ---------- status page ----------
 

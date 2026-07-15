@@ -56,6 +56,11 @@ def create_topic(subject_id: int, body: TopicCreate, user: CurrentUser, db: DbSe
     return topic
 
 
+@router.get("/topics/{topic_id}", response_model=TopicOut)
+def get_topic(topic_id: int, user: CurrentUser, db: DbSession):
+    return get_owned_topic(db, user.id, topic_id)
+
+
 @router.patch("/topics/{topic_id}", response_model=TopicOut)
 def update_topic(topic_id: int, body: TopicUpdate, user: CurrentUser, db: DbSession):
     topic = get_owned_topic(db, user.id, topic_id)
