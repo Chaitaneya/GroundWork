@@ -1,12 +1,16 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import {
+  acceptFlashcard,
   ApiError,
   createFlashcard,
   deleteFlashcard,
+  fetchFlashcardSources,
   listFlashcards,
   updateFlashcard,
   type Flashcard,
 } from "../api";
+import GenerateBar from "./GenerateBar";
+import SourcesView from "./SourcesView";
 
 function dueLabel(card: Flashcard): string {
   if (card.suspended) return "suspended";
@@ -25,9 +29,18 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
   const [back, setBack] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const load = useCallback(
+    () => listFlashcards(topicId).then(setCards).catch((e: Error) => setError(e.message)),
+    [topicId],
+  );
   useEffect(() => {
-    listFlashcards(topicId).then(setCards).catch((e: Error) => setError(e.message));
-  }, [topicId]);
+    load();
+  }, [load]);
+
+  async function onAccept(id: number) {
+    await acceptFlashcard(id);
+    setCards((prev) => (prev ?? []).map((c) => (c.id === id ? { ...c, pending: false } : c)));
+  }
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -61,6 +74,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
 
   return (
     <div className="space-y-6">
+      <GenerateBar topicId={topicId} kind="flashcards" onDone={load} />
       {cards === null && <p className="text-slate-500">Loading…</p>}
       {cards !== null && cards.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
@@ -69,7 +83,12 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
       )}
       <ul className="space-y-2">
         {(cards ?? []).map((c) => (
-          <li key={c.id} className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <li
+            key={c.id}
+            className={`rounded-lg border bg-white px-4 py-3 shadow-sm ${
+              c.pending ? "border-amber-300 bg-amber-50/40" : "border-slate-200"
+            }`}
+          >
             {editing?.id === c.id ? (
               <form onSubmit={onSaveEdit} className="space-y-2">
                 <textarea
@@ -97,13 +116,37 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
               </form>
             ) : (
               <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1 space-y-1">
+                  {c.pending && (
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                      AI-generated — awaiting your review
+                    </span>
+                  )}
                   <p className="font-medium text-slate-900">{c.front}</p>
-                  <p className="mt-0.5 text-sm text-slate-500">{c.back}</p>
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="text-sm text-slate-500">{c.back}</p>
+                  <p className="text-xs text-slate-400">
                     {dueLabel(c)} · ease {c.ease_factor.toFixed(2)} · {c.repetitions} reps
                     {c.lapses > 0 && ` · ${c.lapses} lapses`}
                   </p>
+                  {c.origin === "ai" && (
+                    <SourcesView fetch={() => fetchFlashcardSources(c.id)} />
+                  )}
+                  {c.pending && (
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        onClick={() => onAccept(c.id)}
+                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => onDelete(c.id)}
+                        className="rounded-lg bg-white px-3 py-1 text-xs font-medium text-rose-600 ring-1 ring-rose-200 hover:bg-rose-50"
+                      >
+                        Discard
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button

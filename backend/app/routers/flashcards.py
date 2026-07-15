@@ -117,6 +117,7 @@ def review_queue(user: CurrentUser, db: DbSession):
             Subject.user_id == user.id,
             Flashcard.due_at <= func.now(),
             Flashcard.suspended.is_(False),
+            Flashcard.pending.is_(False),  # unaccepted AI cards don't get reviewed
         )
         .order_by(Flashcard.due_at)
         .limit(QUEUE_LIMIT)

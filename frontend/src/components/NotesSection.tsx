@@ -1,6 +1,17 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import ReactMarkdown from "react-markdown";
-import { ApiError, createNote, deleteNote, listNotes, updateNote, type Note } from "../api";
+import {
+  acceptNote,
+  ApiError,
+  createNote,
+  deleteNote,
+  fetchNoteSources,
+  listNotes,
+  updateNote,
+  type Note,
+} from "../api";
+import GenerateBar from "./GenerateBar";
+import SourcesView from "./SourcesView";
 
 export default function NotesSection({ topicId }: { topicId: number }) {
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -10,9 +21,18 @@ export default function NotesSection({ topicId }: { topicId: number }) {
   const [content, setContent] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const load = useCallback(
+    () => listNotes(topicId).then(setNotes).catch((e: Error) => setError(e.message)),
+    [topicId],
+  );
   useEffect(() => {
-    listNotes(topicId).then(setNotes).catch((e: Error) => setError(e.message));
-  }, [topicId]);
+    load();
+  }, [load]);
+
+  async function onAccept(id: number) {
+    await acceptNote(id);
+    setNotes((prev) => (prev ?? []).map((n) => (n.id === id ? { ...n, pending: false } : n)));
+  }
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -46,6 +66,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
 
   return (
     <div className="space-y-6">
+      <GenerateBar topicId={topicId} kind="notes" onDone={load} />
       {notes === null && <p className="text-slate-500">Loading…</p>}
       {notes !== null && notes.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
@@ -54,7 +75,12 @@ export default function NotesSection({ topicId }: { topicId: number }) {
       )}
       <ul className="space-y-2">
         {(notes ?? []).map((n) => (
-          <li key={n.id} className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <li
+            key={n.id}
+            className={`rounded-lg border bg-white shadow-sm ${
+              n.pending ? "border-amber-300" : "border-slate-200"
+            }`}
+          >
             {editing?.id === n.id ? (
               <form onSubmit={onSaveEdit} className="space-y-2 p-4">
                 <input
@@ -86,6 +112,11 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                     className="min-w-0 flex-1 text-left font-medium text-slate-900 hover:text-indigo-700"
                   >
                     {n.title}
+                    {n.pending && (
+                      <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                        AI — review
+                      </span>
+                    )}
                   </button>
                   <div className="ml-3 flex gap-2">
                     <button
@@ -101,8 +132,31 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                   </div>
                 </div>
                 {openId === n.id && (
-                  <div className="prose prose-sm max-w-none border-t border-slate-100 px-4 py-3 text-slate-700 [&_code]:rounded [&_code]:bg-slate-100 [&_code]:px-1 [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:ml-4 [&_ul]:list-disc">
-                    <ReactMarkdown>{n.content_md || "*This note is empty.*"}</ReactMarkdown>
+                  <div className="border-t border-slate-100 px-4 py-3">
+                    <div className="prose prose-sm max-w-none text-slate-700 [&_code]:rounded [&_code]:bg-slate-100 [&_code]:px-1 [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:ml-4 [&_ul]:list-disc">
+                      <ReactMarkdown>{n.content_md || "*This note is empty.*"}</ReactMarkdown>
+                    </div>
+                    {n.origin === "ai" && (
+                      <div className="mt-3">
+                        <SourcesView fetch={() => fetchNoteSources(n.id)} />
+                      </div>
+                    )}
+                    {n.pending && (
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={() => onAccept(n.id)}
+                          className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => onDelete(n.id)}
+                          className="rounded-lg bg-white px-3 py-1 text-xs font-medium text-rose-600 ring-1 ring-rose-200 hover:bg-rose-50"
+                        >
+                          Discard
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </>

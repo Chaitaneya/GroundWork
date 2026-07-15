@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
+import SourcesView from "../components/SourcesView";
 import {
   addQuestion,
   ApiError,
   deleteQuestion,
+  fetchQuestionSources,
   getQuiz,
   listAttempts,
   submitAttempt,
@@ -285,6 +287,12 @@ export default function QuizPage() {
                 <p className="mt-2 text-sm text-slate-500">
                   {mode === "manage" ? <>Answer: <span className="font-medium text-slate-700">{q.answer_text}</span></> : `Your answer: ${answers[q.id] || "—"}`}
                 </p>
+              )}
+
+              {mode === "manage" && q.origin === "ai" && (
+                <div className="mt-3">
+                  <SourcesView fetch={() => fetchQuestionSources(q.id)} />
+                </div>
               )}
 
               {/* result feedback */}

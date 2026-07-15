@@ -1,15 +1,25 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { ApiError, createQuiz, deleteQuiz, listQuizzes, type Quiz } from "../api";
+import { acceptQuiz, ApiError, createQuiz, deleteQuiz, listQuizzes, type Quiz } from "../api";
+import GenerateBar from "./GenerateBar";
 
 export default function QuizzesSection({ topicId }: { topicId: number }) {
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const load = useCallback(
+    () => listQuizzes(topicId).then(setQuizzes).catch((e: Error) => setError(e.message)),
+    [topicId],
+  );
   useEffect(() => {
-    listQuizzes(topicId).then(setQuizzes).catch((e: Error) => setError(e.message));
-  }, [topicId]);
+    load();
+  }, [load]);
+
+  async function onAccept(id: number) {
+    await acceptQuiz(id);
+    setQuizzes((prev) => (prev ?? []).map((q) => (q.id === id ? { ...q, pending: false } : q)));
+  }
 
   async function onCreate(e: FormEvent) {
     e.preventDefault();
@@ -31,6 +41,7 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
 
   return (
     <div className="space-y-6">
+      <GenerateBar topicId={topicId} kind="quiz" onDone={load} />
       {quizzes === null && <p className="text-slate-500">Loading…</p>}
       {quizzes !== null && quizzes.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
@@ -41,17 +52,36 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         {(quizzes ?? []).map((q) => (
           <li
             key={q.id}
-            className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
+            className={`flex items-center justify-between rounded-lg border bg-white px-4 py-3 shadow-sm ${
+              q.pending ? "border-amber-300 bg-amber-50/40" : "border-slate-200"
+            }`}
           >
             <Link to={`/quizzes/${q.id}`} className="min-w-0 flex-1">
-              <p className="font-medium text-slate-900 hover:text-indigo-700">{q.title}</p>
+              <p className="font-medium text-slate-900 hover:text-indigo-700">
+                {q.title}
+                {q.pending && (
+                  <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                    AI — review
+                  </span>
+                )}
+              </p>
               <p className="text-xs text-slate-400">
                 {q.question_count} {q.question_count === 1 ? "question" : "questions"}
               </p>
             </Link>
-            <button onClick={() => onDelete(q.id)} className="ml-3 text-sm text-slate-400 hover:text-rose-600" title="Delete quiz">
-              ✕
-            </button>
+            <div className="ml-3 flex items-center gap-2">
+              {q.pending && (
+                <button
+                  onClick={() => onAccept(q.id)}
+                  className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                >
+                  Accept
+                </button>
+              )}
+              <button onClick={() => onDelete(q.id)} className="text-sm text-slate-400 hover:text-rose-600" title="Delete quiz">
+                ✕
+              </button>
+            </div>
           </li>
         ))}
       </ul>

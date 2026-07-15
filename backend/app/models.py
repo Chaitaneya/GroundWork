@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     DateTime,
     Float,
@@ -106,6 +107,7 @@ class Note(Base):
     title: Mapped[str] = mapped_column(String(255))
     content_md: Mapped[str] = mapped_column(Text, default="")
     origin: Mapped[str] = mapped_column(String(10), default="manual")  # manual | ai
+    pending: Mapped[bool] = mapped_column(default=False)  # AI item awaiting user accept
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -135,6 +137,7 @@ class Flashcard(Base):
         DateTime(timezone=True), server_default=func.now()  # new cards: due now
     )
     suspended: Mapped[bool] = mapped_column(default=False)
+    pending: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -172,6 +175,7 @@ class Quiz(Base):
     topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"))
     title: Mapped[str] = mapped_column(String(255))
     origin: Mapped[str] = mapped_column(String(10), default="manual")
+    pending: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -257,5 +261,66 @@ class DocumentChunk(Base):
     chunk_index: Mapped[int] = mapped_column()
     page_number: Mapped[int] = mapped_column()
     content: Mapped[str] = mapped_column(Text)
+    # 768-dim Gemini embedding; NULL until embedded (backfilled lazily).
+    embedding = mapped_column(Vector(768), nullable=True)
 
     document: Mapped[Document] = relationship(back_populates="chunks")
+
+
+# ---------- AI traceability ----------
+# Every AI-generated item links to the exact chunks it was derived from.
+# Manual items simply have no source rows.
+
+
+class NoteSource(Base):
+    __tablename__ = "note_sources"
+
+    note_id: Mapped[int] = mapped_column(
+        ForeignKey("notes.id", ondelete="CASCADE"), primary_key=True
+    )
+    chunk_id: Mapped[int] = mapped_column(
+        ForeignKey("document_chunks.id", ondelete="CASCADE"), primary_key=True
+    )
+
+
+class FlashcardSource(Base):
+    __tablename__ = "flashcard_sources"
+
+    flashcard_id: Mapped[int] = mapped_column(
+        ForeignKey("flashcards.id", ondelete="CASCADE"), primary_key=True
+    )
+    chunk_id: Mapped[int] = mapped_column(
+        ForeignKey("document_chunks.id", ondelete="CASCADE"), primary_key=True
+    )
+
+
+class QuestionSource(Base):
+    __tablename__ = "question_sources"
+
+    question_id: Mapped[int] = mapped_column(
+        ForeignKey("questions.id", ondelete="CASCADE"), primary_key=True
+    )
+    chunk_id: Mapped[int] = mapped_column(
+        ForeignKey("document_chunks.id", ondelete="CASCADE"), primary_key=True
+    )
+
+
+class GenerationJob(Base):
+    """One record per AI call: what ran, with which model, and how it ended.
+    This is what makes the AI feature debuggable instead of magical."""
+
+    __tablename__ = "generation_jobs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"))
+    kind: Mapped[str] = mapped_column(String(20))  # notes | flashcards | quiz
+    status: Mapped[str] = mapped_column(String(20), default="queued")
+    model: Mapped[str] = mapped_column(String(100), default="")
+    prompt_version: Mapped[str] = mapped_column(String(20), default="v1")
+    created_count: Mapped[int] = mapped_column(default=0)
+    rejected_count: Mapped[int] = mapped_column(default=0)  # failed citation check
+    error: Mapped[str | None] = mapped_column(String(1000))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

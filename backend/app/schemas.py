@@ -115,6 +115,7 @@ class NoteOut(BaseModel):
     title: str
     content_md: str
     origin: str
+    pending: bool
     created_at: datetime
     updated_at: datetime
 
@@ -147,6 +148,7 @@ class FlashcardOut(BaseModel):
     lapses: int
     due_at: datetime
     suspended: bool
+    pending: bool
     created_at: datetime
 
 
@@ -207,6 +209,7 @@ class QuizOut(BaseModel):
     topic_id: int
     title: str
     origin: str
+    pending: bool
     created_at: datetime
     question_count: int = 0
 
@@ -244,3 +247,26 @@ class AttemptOut(BaseModel):
     id: int
     started_at: datetime
     score_pct: float | None
+
+
+# ---------- AI generation ----------
+
+
+class GenerateRequest(BaseModel):
+    kind: Literal["notes", "flashcards", "quiz"]
+    count: int = Field(default=10, ge=1, le=20)
+
+
+class GenerationJobOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    topic_id: int
+    kind: str
+    status: str  # queued | running | done | failed
+    model: str
+    created_count: int
+    rejected_count: int
+    error: str | None
+    created_at: datetime
+    finished_at: datetime | None

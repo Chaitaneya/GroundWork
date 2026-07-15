@@ -17,5 +17,11 @@ class Settings(BaseSettings):
     secret_key: str = "dev-only-insecure-secret"
     access_token_expire_minutes: int = 60 * 24 * 7  # 7 days
 
+    # Gemini (Phase 4). Empty key = AI features cleanly disabled.
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+    embedding_model: str = "gemini-embedding-001"
+    embedding_dim: int = 768  # changing this means re-embedding every chunk
+
 
 settings = Settings()

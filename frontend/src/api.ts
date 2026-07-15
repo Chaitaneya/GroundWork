@@ -192,6 +192,7 @@ export interface Note {
   title: string;
   content_md: string;
   origin: "manual" | "ai";
+  pending: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -217,6 +218,7 @@ export interface Flashcard {
   lapses: number;
   due_at: string;
   suspended: boolean;
+  pending: boolean;
   created_at: string;
 }
 
@@ -261,6 +263,7 @@ export interface Quiz {
   topic_id: number;
   title: string;
   origin: string;
+  pending: boolean;
   created_at: string;
   question_count: number;
 }
@@ -309,6 +312,41 @@ export const submitAttempt = (quizId: number, answers: { question_id: number; gi
   postJson<AttemptResult>(`/api/quizzes/${quizId}/attempts`, { answers });
 export const listAttempts = (quizId: number) =>
   request<Attempt[]>(`/api/quizzes/${quizId}/attempts`);
+
+// ---------- AI generation ----------
+
+export type GenerationKind = "notes" | "flashcards" | "quiz";
+
+export interface GenerationJob {
+  id: number;
+  topic_id: number;
+  kind: GenerationKind;
+  status: "queued" | "running" | "done" | "failed";
+  model: string;
+  created_count: number;
+  rejected_count: number;
+  error: string | null;
+  created_at: string;
+  finished_at: string | null;
+}
+
+export const startGeneration = (topicId: number, kind: GenerationKind, count = 10) =>
+  postJson<GenerationJob>(`/api/topics/${topicId}/generate`, { kind, count });
+export const listGenerationJobs = (topicId: number) =>
+  request<GenerationJob[]>(`/api/topics/${topicId}/generation-jobs`);
+
+export const acceptFlashcard = (id: number) =>
+  request<void>(`/api/flashcards/${id}/accept`, { method: "POST" });
+export const acceptNote = (id: number) =>
+  request<void>(`/api/notes/${id}/accept`, { method: "POST" });
+export const acceptQuiz = (id: number) =>
+  request<void>(`/api/quizzes/${id}/accept`, { method: "POST" });
+
+export const fetchFlashcardSources = (id: number) =>
+  request<Chunk[]>(`/api/flashcards/${id}/sources`);
+export const fetchNoteSources = (id: number) => request<Chunk[]>(`/api/notes/${id}/sources`);
+export const fetchQuestionSources = (id: number) =>
+  request<Chunk[]>(`/api/questions/${id}/sources`);
 
 // ---------- status page ----------
 
