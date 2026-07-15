@@ -1,4 +1,4 @@
-import { BrowserRouter, Link, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Navigate, NavLink, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./auth";
 import Wordmark from "./components/Wordmark";
 import DashboardPage from "./pages/DashboardPage";
@@ -31,9 +31,14 @@ function HomeGate() {
   return user ? <Navigate to="/dashboard" replace /> : <LandingPage />;
 }
 
+const NAV_ITEMS = [
+  { to: "/dashboard", label: "Home", icon: "◉" },
+  { to: "/subjects", label: "Subjects", icon: "▤" },
+  { to: "/review", label: "Review", icon: "⚡" },
+];
+
 function Layout() {
   const { user, signOut } = useAuth();
-  const nav = "font-medium text-slate-400 transition hover:text-slate-100";
   return (
     <div className="min-h-screen bg-transparent">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-white/5 backdrop-blur-xl">
@@ -41,26 +46,64 @@ function Layout() {
           <Link to="/dashboard">
             <Wordmark />
           </Link>
-          <div className="flex items-center gap-4 text-sm">
-            <Link to="/dashboard" className={nav}>
-              Dashboard
-            </Link>
-            <Link to="/subjects" className={nav}>
-              Subjects
-            </Link>
-            <Link to="/review" className="font-medium text-teal-300 transition hover:text-teal-200">
-              Review
-            </Link>
-            <span className="hidden text-slate-500 sm:inline">{user?.display_name}</span>
+          {/* desktop inline nav */}
+          <div className="hidden items-center gap-5 text-sm sm:flex">
+            {NAV_ITEMS.map((n) => (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                className={({ isActive }) =>
+                  `font-medium transition ${isActive ? "text-teal-300" : "text-slate-400 hover:text-slate-100"}`
+                }
+              >
+                {n.label}
+              </NavLink>
+            ))}
+            <span className="text-slate-500">{user?.display_name}</span>
             <button onClick={signOut} className="text-slate-500 hover:text-slate-100">
               Sign out
             </button>
           </div>
+          {/* mobile: just a sign-out affordance up top */}
+          <button
+            onClick={signOut}
+            className="text-sm font-medium text-slate-400 hover:text-slate-100 sm:hidden"
+          >
+            Sign out
+          </button>
         </div>
       </header>
-      <main className="mx-auto max-w-4xl px-4 py-8">
+
+      {/* extra bottom padding on mobile so the tab bar never covers content */}
+      <main className="mx-auto max-w-4xl px-4 pt-6 pb-28 sm:py-8">
         <Outlet />
       </main>
+
+      {/* mobile bottom tab bar — native-app feel */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-white/[0.07] backdrop-blur-xl sm:hidden">
+        <div className="mx-auto flex max-w-md items-stretch justify-around px-2 py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
+          {NAV_ITEMS.map((n) => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              className={({ isActive }) =>
+                `flex flex-1 flex-col items-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition ${
+                  isActive ? "text-teal-300" : "text-slate-400"
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <span className={`text-lg leading-none ${isActive ? "drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]" : ""}`}>
+                    {n.icon}
+                  </span>
+                  {n.label}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }

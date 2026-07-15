@@ -107,7 +107,7 @@ export default function LandingPage() {
       </header>
 
       {/* hero */}
-      <section className="relative overflow-hidden px-5 pt-36 pb-24">
+      <section className="relative overflow-hidden px-5 pt-28 pb-16 sm:pt-36 sm:pb-24">
         {/* glow + dot grid */}
         <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_50%_-20%,rgba(45,212,191,0.28),transparent_60%),radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:100%_100%,26px_26px]" />
         <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-2">
@@ -116,7 +116,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
-              className="font-display text-5xl leading-tight font-bold tracking-tight text-slate-100 sm:text-6xl"
+              className="font-display text-4xl leading-tight font-bold tracking-tight text-slate-100 sm:text-6xl"
             >
               Study what you
               <br />

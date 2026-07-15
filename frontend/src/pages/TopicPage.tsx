@@ -112,12 +112,12 @@ export default function TopicPage() {
         {topic?.description && <p className="mt-1 text-slate-400">{topic.description}</p>}
       </div>
 
-      <nav className="flex gap-1 border-b border-white/10">
+      <nav className="flex gap-1 overflow-x-auto border-b border-white/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`rounded-t-lg px-4 py-2 text-sm font-medium ${
+            className={`shrink-0 rounded-t-lg px-4 py-2 text-sm font-medium ${
               tab === t
                 ? "border border-b-0 border-white/10 bg-white/[0.06] backdrop-blur-xl text-teal-200"
                 : "text-slate-400 hover:text-slate-100"

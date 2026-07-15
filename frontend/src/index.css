@@ -14,7 +14,7 @@
   }
   body {
     /* deep teal-black base; the aurora rides above it, fixed */
-    @apply bg-[#04120f] font-sans text-slate-200 antialiased;
+    @apply overflow-x-hidden bg-[#04120f] font-sans text-slate-200 antialiased;
   }
   /* Aurora: soft drifting light blobs behind everything, so frosted glass
      panels have color to refract. Fixed = doesn't scroll away. */
