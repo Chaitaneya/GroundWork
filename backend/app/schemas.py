@@ -261,6 +261,43 @@ class PendingBulkRequest(BaseModel):
     kind: Literal["notes", "flashcards", "quiz"]
 
 
+# ---------- analytics ----------
+
+
+class TopicStatOut(BaseModel):
+    topic_id: int
+    topic_name: str
+    subject_name: str
+    card_count: int
+    due_count: int
+    review_count: int
+    again_rate: float | None
+    avg_ease: float | None
+    quiz_attempt_count: int
+    quiz_accuracy: float | None
+    weakness: float | None  # 0-100, higher = weaker
+
+
+class DayCount(BaseModel):
+    day: str  # ISO date
+    count: int
+
+
+class RecentAttempt(BaseModel):
+    id: int
+    quiz_title: str
+    topic_name: str
+    score_pct: float | None
+    started_at: datetime
+
+
+class DashboardOut(BaseModel):
+    topics: list[TopicStatOut]
+    due_now: int
+    reviews_by_day: list[DayCount]
+    recent_attempts: list[RecentAttempt]
+
+
 class GenerationJobOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

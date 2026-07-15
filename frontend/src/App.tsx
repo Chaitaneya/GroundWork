@@ -15,6 +15,7 @@ import { AuthProvider, RequireAuth, useAuth } from "./auth";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import StatusPage from "./pages/StatusPage";
+import DashboardPage from "./pages/DashboardPage";
 import QuizPage from "./pages/QuizPage";
 import ReviewPage from "./pages/ReviewPage";
 import SubjectPage from "./pages/SubjectPage";
@@ -31,6 +32,9 @@ function Layout() {
             Groundwork
           </Link>
           <div className="flex items-center gap-4 text-sm">
+            <Link to="/dashboard" className="font-medium text-indigo-600 hover:underline">
+              Dashboard
+            </Link>
             <Link to="/review" className="font-medium text-indigo-600 hover:underline">
               Review
             </Link>
@@ -68,6 +72,7 @@ export default function App() {
             <Route path="/topics/:topicId" element={<TopicPage />} />
             <Route path="/quizzes/:quizId" element={<QuizPage />} />
             <Route path="/review" element={<ReviewPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

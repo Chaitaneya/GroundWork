@@ -7,10 +7,13 @@ as pending (origin='ai') with their source rows → mark the job done/failed.
 
 from datetime import datetime, timezone
 
+from sqlalchemy import select
+
 from . import ai
 from .config import settings
 from .db import SessionLocal, get_engine
 from .models import (
+    AttemptAnswer,
     Flashcard,
     FlashcardSource,
     GenerationJob,
@@ -95,8 +98,24 @@ def run_generation_job(job_id: int, count: int = DEFAULT_COUNT) -> None:
                     created += 1
 
             elif job.kind == "quiz":
+                # Adaptive bias: feed recently-missed question prompts from
+                # this topic back into the prompt so the new quiz re-tests
+                # what the student actually got wrong.
+                missed_prompts = list(
+                    db.scalars(
+                        select(Question.prompt)
+                        .distinct()
+                        .join(AttemptAnswer, AttemptAnswer.question_id == Question.id)
+                        .join(Quiz, Question.quiz_id == Quiz.id)
+                        .where(
+                            Quiz.topic_id == topic.id,
+                            AttemptAnswer.is_correct.is_(False),
+                        )
+                        .limit(5)
+                    ).all()
+                )
                 gen_quiz = ai.generate_structured(
-                    ai.quiz_prompt(topic, context, count), ai.GenQuiz
+                    ai.quiz_prompt(topic, context, count, missed_prompts), ai.GenQuiz
                 )
                 quiz = Quiz(topic_id=topic.id, title=gen_quiz.title, origin="ai", pending=True)
                 db.add(quiz)

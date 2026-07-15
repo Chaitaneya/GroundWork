@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, status
 from sqlalchemy import func, select
 
 from .. import sm2
+from ..analytics import weakness_by_topic
 from ..deps import CurrentUser, DbSession
 from ..models import Flashcard, Review, Subject, Topic
 from ..schemas import (
@@ -108,7 +109,8 @@ def review_flashcard(
 
 @router.get("/review/queue", response_model=list[QueueCard])
 def review_queue(user: CurrentUser, db: DbSession):
-    """All due cards across every subject, oldest due first."""
+    """All due cards across every subject — weakest topics first, then
+    oldest due. Weakness comes from quiz accuracy + review history."""
     rows = db.execute(
         select(Flashcard, Topic.name, Subject.name)
         .join(Topic, Flashcard.topic_id == Topic.id)
@@ -122,11 +124,15 @@ def review_queue(user: CurrentUser, db: DbSession):
         .order_by(Flashcard.due_at)
         .limit(QUEUE_LIMIT)
     ).all()
+    weakness = weakness_by_topic(db, user.id)
+    ordered = sorted(
+        rows, key=lambda r: (-weakness.get(r[0].topic_id, 0.0), r[0].due_at)
+    )
     return [
         QueueCard(
             **FlashcardOut.model_validate(card).model_dump(),
             topic_name=topic_name,
             subject_name=subject_name,
         )
-        for card, topic_name, subject_name in rows
+        for card, topic_name, subject_name in ordered
     ]

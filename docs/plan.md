@@ -168,7 +168,11 @@ Gemini setup, embeddings on ingestion (backfill Phase-2 chunks), pgvector retrie
 Weakness score in SQL, dashboard (charts of weak topics, review load, quiz history), review queue ordering influenced by weakness, quiz generation biased toward weak topics.
 **Done when:** the dashboard visibly reorders as you deliberately fail cards/quizzes in one topic.
 
-### Phase 6 — Deployment + DevOps + evals (~3–4 weeks)
+### Phase 6 — Frontend polish (~2 weeks)
+A deliberate design pass over the whole UI now that every feature exists: consistent spacing/typography scale, a proper landing/home experience, mobile responsiveness audit (the app must work one-handed on a phone), loading skeletons instead of "Loading…" text, keyboard shortcuts for the review flow (space = flip, 1-4 = rate), empty states with guidance, and general visual identity (logo mark, color refinement, dark mode if time allows).
+**Done when:** the app feels like a product, not a project — usable end-to-end on a phone, and every screen would survive a screenshot in a portfolio README.
+
+### Phase 7 — Deployment + DevOps + evals (~3–4 weeks)
 First deployment: backend on Render free tier, frontend on Vercel, production env vars and CORS. GitHub Actions CI: ruff + mypy + pytest (backend), eslint + tsc + vitest (frontend), a couple of Playwright smoke tests; migrations checked in CI; **groundedness eval suite** (fixed PDF + topics → generate → mechanical citation checks + LLM-as-judge → fail CI below threshold); Sentry + UptimeRobot; README with architecture diagram + demo GIF + honest limitations section.
 **Done when:** the app is live at a public URL, and a PR that breaks tests or degrades groundedness gets a red X automatically.
 

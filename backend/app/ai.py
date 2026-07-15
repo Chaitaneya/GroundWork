@@ -171,9 +171,22 @@ STUDY MATERIAL:
 {context}"""
 
 
-def quiz_prompt(topic: Topic, context: str, count: int) -> str:
+def quiz_prompt(
+    topic: Topic, context: str, count: int, missed_prompts: list[str] | None = None
+) -> str:
+    # Adaptive bias: if the student has recently answered questions wrong,
+    # steer the new quiz toward those ideas (still grounded in the material).
+    weakness_section = ""
+    if missed_prompts:
+        missed = "\n".join(f"- {p}" for p in missed_prompts)
+        weakness_section = f"""
+The student recently answered questions about these ideas INCORRECTLY.
+Prioritize questions that re-test these ideas from new angles (do not repeat
+the exact same questions):
+{missed}
+"""
     return f"""You are writing a quiz for the topic "{topic.name}".
-{GROUNDING_RULES}
+{GROUNDING_RULES}{weakness_section}
 Create 1 quiz with up to {count} questions: a mix of multiple-choice (4 options,
 exactly one correct), true/false (options "True" and "False", exactly one correct),
 and short-answer (a short factual answer in answer_text). Every question gets a

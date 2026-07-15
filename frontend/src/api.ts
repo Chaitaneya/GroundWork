@@ -353,6 +353,37 @@ export const fetchNoteSources = (id: number) => request<Chunk[]>(`/api/notes/${i
 export const fetchQuestionSources = (id: number) =>
   request<Chunk[]>(`/api/questions/${id}/sources`);
 
+// ---------- analytics ----------
+
+export interface TopicStat {
+  topic_id: number;
+  topic_name: string;
+  subject_name: string;
+  card_count: number;
+  due_count: number;
+  review_count: number;
+  again_rate: number | null;
+  avg_ease: number | null;
+  quiz_attempt_count: number;
+  quiz_accuracy: number | null;
+  weakness: number | null;
+}
+
+export interface Dashboard {
+  topics: TopicStat[];
+  due_now: number;
+  reviews_by_day: { day: string; count: number }[];
+  recent_attempts: {
+    id: number;
+    quiz_title: string;
+    topic_name: string;
+    score_pct: number | null;
+    started_at: string;
+  }[];
+}
+
+export const fetchDashboard = () => request<Dashboard>("/api/analytics/overview");
+
 // ---------- status page ----------
 
 export const fetchHealth = () => request<HealthResponse>("/api/health");
