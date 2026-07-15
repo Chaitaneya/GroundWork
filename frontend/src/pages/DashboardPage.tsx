@@ -4,10 +4,10 @@ import { fetchDashboard, type Dashboard, type TopicStat } from "../api";
 
 function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm text-slate-500">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
-      {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+      <p className="text-sm text-zinc-400">{label}</p>
+      <p className="mt-1 text-3xl font-bold text-zinc-100">{value}</p>
+      {hint && <p className="mt-1 text-xs text-zinc-500">{hint}</p>}
     </div>
   );
 }
@@ -21,17 +21,17 @@ function WeaknessRow({ t }: { t: TopicStat }) {
   return (
     <li className="py-3">
       <div className="mb-1 flex items-baseline justify-between gap-3">
-        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-slate-900 hover:text-indigo-700">
+        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-zinc-100 hover:text-violet-300">
           {t.topic_name}
-          <span className="ml-2 text-xs font-normal text-slate-400">{t.subject_name}</span>
+          <span className="ml-2 text-xs font-normal text-zinc-500">{t.subject_name}</span>
         </Link>
-        <span className="shrink-0 text-sm font-semibold text-slate-700">{t.weakness}</span>
+        <span className="shrink-0 text-sm font-semibold text-zinc-300">{t.weakness}</span>
       </div>
       {/* single-hue magnitude bar: length encodes weakness, color stays constant */}
-      <div className="h-2.5 w-full overflow-hidden rounded bg-slate-100" title={`Weakness ${t.weakness} / 100`}>
-        <div className="h-full rounded bg-indigo-500" style={{ width: `${t.weakness}%` }} />
+      <div className="h-2.5 w-full overflow-hidden rounded bg-zinc-800" title={`Weakness ${t.weakness} / 100`}>
+        <div className="h-full rounded bg-violet-500" style={{ width: `${t.weakness}%` }} />
       </div>
-      <p className="mt-1 text-xs text-slate-400">{parts.join(" · ")}</p>
+      <p className="mt-1 text-xs text-zinc-500">{parts.join(" · ")}</p>
     </li>
   );
 }
@@ -44,8 +44,8 @@ export default function DashboardPage() {
     fetchDashboard().then(setData).catch((e: Error) => setError(e.message));
   }, []);
 
-  if (error) return <p className="text-rose-600">{error}</p>;
-  if (!data) return <p className="text-slate-500">Loading your dashboard…</p>;
+  if (error) return <p className="text-rose-400">{error}</p>;
+  if (!data) return <p className="text-zinc-400">Loading your dashboard…</p>;
 
   const ranked = data.topics
     .filter((t) => t.weakness !== null)
@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-xl font-semibold text-slate-900">Dashboard</h2>
+      <h2 className="text-xl font-semibold text-zinc-100">Dashboard</h2>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatTile
@@ -71,66 +71,66 @@ export default function DashboardPage() {
       {data.due_now > 0 && (
         <Link
           to="/review"
-          className="inline-block rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+          className="inline-block rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400"
         >
           Start reviewing →
         </Link>
       )}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h3 className="font-semibold text-slate-900">Weakest topics</h3>
-        <p className="mt-0.5 text-xs text-slate-400">
+      <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+        <h3 className="font-semibold text-zinc-100">Weakest topics</h3>
+        <p className="mt-0.5 text-xs text-zinc-500">
           Score 0–100 from recent quiz accuracy, forgotten reviews, and card ease — higher means weaker.
         </p>
         {ranked.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-500">
+          <p className="mt-4 text-sm text-zinc-400">
             No signal yet — review some flashcards or take a quiz, and weakness scores appear here.
           </p>
         ) : (
-          <ul className="mt-2 divide-y divide-slate-100">
+          <ul className="mt-2 divide-y divide-zinc-800">
             {ranked.map((t) => (
               <WeaknessRow key={t.topic_id} t={t} />
             ))}
           </ul>
         )}
         {unranked.length > 0 && (
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-xs text-zinc-500">
             Not enough data yet: {unranked.map((t) => t.topic_name).join(", ")}
           </p>
         )}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-900">Review activity — last 7 days</h3>
+        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+          <h3 className="font-semibold text-zinc-100">Review activity — last 7 days</h3>
           <div className="mt-4 flex h-32 items-end gap-2">
             {data.reviews_by_day.map((d) => (
               <div key={d.day} className="flex flex-1 flex-col items-center gap-1" title={`${d.day}: ${d.count} reviews`}>
-                <span className="text-xs text-slate-500">{d.count > 0 ? d.count : ""}</span>
+                <span className="text-xs text-zinc-400">{d.count > 0 ? d.count : ""}</span>
                 <div
-                  className="w-full max-w-8 rounded-t bg-indigo-500"
+                  className="w-full max-w-8 rounded-t bg-violet-500"
                   style={{ height: `${Math.max(d.count > 0 ? 8 : 2, (d.count / maxDay) * 96)}px` }}
                 />
-                <span className="text-[10px] text-slate-400">{d.day.slice(5)}</span>
+                <span className="text-[10px] text-zinc-500">{d.day.slice(5)}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-900">Recent quiz attempts</h3>
+        <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+          <h3 className="font-semibold text-zinc-100">Recent quiz attempts</h3>
           {data.recent_attempts.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-500">No attempts yet — take a quiz from any topic.</p>
+            <p className="mt-4 text-sm text-zinc-400">No attempts yet — take a quiz from any topic.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">
               {data.recent_attempts.map((a) => (
                 <li key={a.id} className="flex items-center justify-between gap-3">
-                  <span className="min-w-0 truncate text-slate-700">
+                  <span className="min-w-0 truncate text-zinc-300">
                     {a.quiz_title}
-                    <span className="ml-2 text-xs text-slate-400">{a.topic_name}</span>
+                    <span className="ml-2 text-xs text-zinc-500">{a.topic_name}</span>
                   </span>
                   <span className={`shrink-0 font-semibold ${
-                    (a.score_pct ?? 0) >= 60 ? "text-emerald-600" : "text-rose-600"
+                    (a.score_pct ?? 0) >= 60 ? "text-emerald-400" : "text-rose-400"
                   }`}>
                     {a.score_pct}%
                   </span>

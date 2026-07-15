@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { fetchReviewQueue, reviewFlashcard, type QueueCard } from "../api";
 
 const RATINGS: { value: 1 | 2 | 3 | 4; label: string; classes: string }[] = [
-  { value: 1, label: "Again", classes: "bg-rose-600 hover:bg-rose-700" },
+  { value: 1, label: "Again", classes: "bg-rose-600 hover:bg-rose-500" },
   { value: 2, label: "Hard", classes: "bg-amber-500 hover:bg-amber-600" },
-  { value: 3, label: "Good", classes: "bg-emerald-600 hover:bg-emerald-700" },
+  { value: 3, label: "Good", classes: "bg-emerald-600 hover:bg-emerald-500" },
   { value: 4, label: "Easy", classes: "bg-sky-600 hover:bg-sky-700" },
 ];
 
@@ -31,20 +31,20 @@ export default function ReviewPage() {
   }
 
   if (queue === null) {
-    return <p className="text-slate-500">Loading your review queue…</p>;
+    return <p className="text-zinc-400">Loading your review queue…</p>;
   }
 
   if (!card) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <p className="text-4xl">🎉</p>
-        <h2 className="mt-3 text-xl font-semibold text-slate-900">
+        <h2 className="mt-3 text-xl font-semibold text-zinc-100">
           {done > 0 ? `Nice — ${done} card${done === 1 ? "" : "s"} reviewed.` : "Nothing due right now."}
         </h2>
-        <p className="mt-2 text-slate-500">
+        <p className="mt-2 text-zinc-400">
           Cards come back when SM-2 schedules them. Add more from any topic's Flashcards tab.
         </p>
-        <Link to="/" className="mt-4 inline-block font-medium text-indigo-600 hover:underline">
+        <Link to="/dashboard" className="mt-4 inline-block font-medium text-violet-400 hover:underline">
           ← Back to subjects
         </Link>
       </div>
@@ -53,19 +53,19 @@ export default function ReviewPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <p className="mb-3 text-sm text-slate-500">
+      <p className="mb-3 text-sm text-zinc-400">
         {queue.length} card{queue.length === 1 ? "" : "s"} left · {card.subject_name} / {card.topic_name}
       </p>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Front</p>
-        <p className="mt-2 whitespace-pre-wrap text-lg text-slate-900">{card.front}</p>
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Front</p>
+        <p className="mt-2 whitespace-pre-wrap text-lg text-zinc-100">{card.front}</p>
 
         {revealed && (
           <>
-            <hr className="my-6 border-slate-100" />
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Back</p>
-            <p className="mt-2 whitespace-pre-wrap text-lg text-slate-900">{card.back}</p>
+            <hr className="my-6 border-zinc-800" />
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Back</p>
+            <p className="mt-2 whitespace-pre-wrap text-lg text-zinc-100">{card.back}</p>
           </>
         )}
       </div>
@@ -74,7 +74,7 @@ export default function ReviewPage() {
         {!revealed ? (
           <button
             onClick={() => setRevealed(true)}
-            className="w-full rounded-xl bg-indigo-600 py-3 font-medium text-white hover:bg-indigo-700"
+            className="w-full rounded-xl bg-violet-500 py-3 font-medium text-white hover:bg-violet-400"
           >
             Show answer
           </button>
@@ -92,7 +92,7 @@ export default function ReviewPage() {
           </div>
         )}
       </div>
-      <p className="mt-3 text-center text-xs text-slate-400">
+      <p className="mt-3 text-center text-xs text-zinc-500">
         Again = forgot · Hard = barely · Good = remembered · Easy = instant
       </p>
     </div>

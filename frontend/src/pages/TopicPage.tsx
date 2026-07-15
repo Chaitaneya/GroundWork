@@ -17,9 +17,9 @@ import {
 
 function StatusBadge({ status }: { status: Document["status"] }) {
   const styles = {
-    processing: "bg-amber-100 text-amber-800",
-    ready: "bg-emerald-100 text-emerald-800",
-    failed: "bg-rose-100 text-rose-800",
+    processing: "bg-amber-500/15 text-amber-300",
+    ready: "bg-emerald-500/15 text-emerald-300",
+    failed: "bg-rose-500/15 text-rose-300",
   }[status];
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${styles}`}>
@@ -104,23 +104,23 @@ export default function TopicPage() {
     <div className="space-y-8">
       <div>
         {topic && (
-          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-indigo-600 hover:underline">
+          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-violet-400 hover:underline">
             ← Back to subject
           </Link>
         )}
-        <h2 className="mt-2 text-2xl font-bold text-slate-900">{topic?.name ?? "…"}</h2>
-        {topic?.description && <p className="mt-1 text-slate-500">{topic.description}</p>}
+        <h2 className="mt-2 text-2xl font-bold text-zinc-100">{topic?.name ?? "…"}</h2>
+        {topic?.description && <p className="mt-1 text-zinc-400">{topic.description}</p>}
       </div>
 
-      <nav className="flex gap-1 border-b border-slate-200">
+      <nav className="flex gap-1 border-b border-zinc-800">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`rounded-t-lg px-4 py-2 text-sm font-medium ${
               tab === t
-                ? "border border-b-0 border-slate-200 bg-white text-indigo-700"
-                : "text-slate-500 hover:text-slate-900"
+                ? "border border-b-0 border-zinc-800 bg-zinc-900 text-violet-300"
+                : "text-zinc-400 hover:text-zinc-100"
             }`}
           >
             {t}
@@ -133,65 +133,65 @@ export default function TopicPage() {
       {tab === "Quizzes" && <QuizzesSection topicId={id} />}
 
       <section className={tab === "Documents" ? "" : "hidden"}>
-        <h3 className="mb-4 text-lg font-semibold text-slate-900">Reading material</h3>
+        <h3 className="mb-4 text-lg font-semibold text-zinc-100">Reading material</h3>
 
         <form
           onSubmit={onUpload}
-          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4 shadow-sm"
         >
           <input
             ref={fileInput}
             type="file"
             accept=".pdf,.txt,.md"
             required
-            className="text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+            className="text-sm text-zinc-400 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-800 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-violet-300 hover:file:bg-zinc-700"
           />
           <button
             type="submit"
             disabled={uploading}
-            className="rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-lg bg-violet-500 px-4 py-1.5 text-sm font-medium text-white hover:bg-violet-400 disabled:opacity-50"
           >
             {uploading ? "Uploading…" : "Upload"}
           </button>
-          <span className="text-xs text-slate-400">PDF, TXT, or MD · max 25 MB</span>
+          <span className="text-xs text-zinc-500">PDF, TXT, or MD · max 25 MB</span>
         </form>
-        {error && <p className="mb-3 text-sm text-rose-600">{error}</p>}
+        {error && <p className="mb-3 text-sm text-rose-400">{error}</p>}
 
-        {documents === null && <p className="text-slate-500">Loading…</p>}
+        {documents === null && <p className="text-zinc-400">Loading…</p>}
         {documents !== null && documents.length === 0 && (
-          <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
+          <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
             No documents yet — upload the reading material for this topic.
           </p>
         )}
 
         <ul className="space-y-2">
           {(documents ?? []).map((d) => (
-            <li key={d.id} className="rounded-lg border border-slate-200 bg-white shadow-sm">
+            <li key={d.id} className="rounded-lg border border-zinc-800 bg-zinc-900 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 font-medium text-slate-900">
+                  <p className="flex items-center gap-2 font-medium text-zinc-100">
                     {d.title} <StatusBadge status={d.status} />
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-zinc-400">
                     {d.original_filename}
                     {d.status === "ready" && ` · ${d.page_count} pages · ${d.chunk_count} chunks`}
                   </p>
                   {d.status === "failed" && d.error && (
-                    <p className="mt-1 text-sm text-rose-600">{d.error}</p>
+                    <p className="mt-1 text-sm text-rose-400">{d.error}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   {d.status === "ready" && (
                     <button
                       onClick={() => toggleChunks(d.id)}
-                      className="text-sm font-medium text-indigo-600 hover:underline"
+                      className="text-sm font-medium text-violet-400 hover:underline"
                     >
                       {openDocId === d.id ? "Hide chunks" : "View chunks"}
                     </button>
                   )}
                   <button
                     onClick={() => onDelete(d.id)}
-                    className="text-sm text-slate-400 hover:text-rose-600"
+                    className="text-sm text-zinc-500 hover:text-rose-400"
                     title="Delete document"
                   >
                     ✕
@@ -200,17 +200,17 @@ export default function TopicPage() {
               </div>
 
               {openDocId === d.id && (
-                <div className="border-t border-slate-100 px-4 py-3">
-                  {chunks === null && <p className="text-sm text-slate-500">Loading chunks…</p>}
+                <div className="border-t border-zinc-800 px-4 py-3">
+                  {chunks === null && <p className="text-sm text-zinc-400">Loading chunks…</p>}
                   {chunks !== null && (
                     <ul className="space-y-3">
                       {chunks.map((c) => (
-                        <li key={c.id} className="rounded-lg bg-slate-50 p-3">
-                          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        <li key={c.id} className="rounded-lg bg-zinc-950 p-3">
+                          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
                             Chunk {c.chunk_index + 1} · page {c.page_number} · ~
                             {Math.round(c.content.length / 4)} tokens
                           </p>
-                          <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+                          <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">
                             {c.content}
                           </p>
                         </li>

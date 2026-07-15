@@ -1,1 +1,23 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/700.css";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-zinc-950 font-sans text-zinc-200 antialiased;
+  }
+  input,
+  textarea,
+  select {
+    @apply bg-zinc-900 text-zinc-100 placeholder:text-zinc-500;
+  }
+  ::selection {
+    @apply bg-violet-500/40;
+  }
+}

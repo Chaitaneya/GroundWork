@@ -83,9 +83,9 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
         count={(cards ?? []).filter((c) => c.pending).length}
         onChanged={load}
       />
-      {cards === null && <p className="text-slate-500">Loading…</p>}
+      {cards === null && <p className="text-zinc-400">Loading…</p>}
       {cards !== null && cards.length === 0 && (
-        <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
+        <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
           No flashcards yet — add one below, then review it from the Review page.
         </p>
       )}
@@ -93,8 +93,8 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
         {(cards ?? []).map((c) => (
           <li
             key={c.id}
-            className={`rounded-lg border bg-white px-4 py-3 shadow-sm ${
-              c.pending ? "border-amber-300 bg-amber-50/40" : "border-slate-200"
+            className={`rounded-lg border bg-zinc-900 px-4 py-3 shadow-sm ${
+              c.pending ? "border-amber-500/40 bg-amber-500/5" : "border-zinc-800"
             }`}
           >
             {editing?.id === c.id ? (
@@ -104,20 +104,20 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                   rows={2}
                   value={editing.front}
                   onChange={(e) => setEditing({ ...editing, front: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 px-3 py-1.5 text-sm focus:border-violet-500 focus:outline-none"
                 />
                 <textarea
                   required
                   rows={2}
                   value={editing.back}
                   onChange={(e) => setEditing({ ...editing, back: e.target.value })}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-lg border border-zinc-700 px-3 py-1.5 text-sm focus:border-violet-500 focus:outline-none"
                 />
                 <div className="flex gap-2">
-                  <button type="submit" className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+                  <button type="submit" className="rounded-lg bg-violet-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-400">
                     Save
                   </button>
-                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900">
+                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-100">
                     Cancel
                   </button>
                 </div>
@@ -126,13 +126,13 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1 space-y-1">
                   {c.pending && (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                    <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-300">
                       AI-generated — awaiting your review
                     </span>
                   )}
-                  <p className="font-medium text-slate-900">{c.front}</p>
-                  <p className="text-sm text-slate-500">{c.back}</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="font-medium text-zinc-100">{c.front}</p>
+                  <p className="text-sm text-zinc-400">{c.back}</p>
+                  <p className="text-xs text-zinc-500">
                     {dueLabel(c)} · ease {c.ease_factor.toFixed(2)} · {c.repetitions} reps
                     {c.lapses > 0 && ` · ${c.lapses} lapses`}
                   </p>
@@ -143,13 +143,13 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                     <div className="flex gap-2 pt-1">
                       <button
                         onClick={() => onAccept(c.id)}
-                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+                        className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-500"
                       >
                         Accept
                       </button>
                       <button
                         onClick={() => onDelete(c.id)}
-                        className="rounded-lg bg-white px-3 py-1 text-xs font-medium text-rose-600 ring-1 ring-rose-200 hover:bg-rose-50"
+                        className="rounded-lg bg-zinc-900 px-3 py-1 text-xs font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
                       >
                         Discard
                       </button>
@@ -159,12 +159,12 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                 <div className="flex shrink-0 gap-2">
                   <button
                     onClick={() => setEditing({ id: c.id, front: c.front, back: c.back })}
-                    className="text-sm text-slate-400 hover:text-indigo-600"
+                    className="text-sm text-zinc-500 hover:text-violet-300"
                     title="Edit card"
                   >
                     ✎
                   </button>
-                  <button onClick={() => onDelete(c.id)} className="text-sm text-slate-400 hover:text-rose-600" title="Delete card">
+                  <button onClick={() => onDelete(c.id)} className="text-sm text-zinc-500 hover:text-rose-400" title="Delete card">
                     ✕
                   </button>
                 </div>
@@ -174,8 +174,8 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h4 className="font-semibold text-slate-900">Add a flashcard</h4>
+      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+        <h4 className="font-semibold text-zinc-100">Add a flashcard</h4>
         <textarea
           required
           rows={2}
@@ -183,7 +183,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
           placeholder="Front — the question or prompt"
           value={front}
           onChange={(e) => setFront(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+          className="w-full rounded-lg border border-zinc-700 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
         />
         <textarea
           required
@@ -192,10 +192,10 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
           placeholder="Back — the answer"
           value={back}
           onChange={(e) => setBack(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+          className="w-full rounded-lg border border-zinc-700 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
         />
-        {error && <p className="text-sm text-rose-600">{error}</p>}
-        <button type="submit" className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700">
+        {error && <p className="text-sm text-rose-400">{error}</p>}
+        <button type="submit" className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400">
           Add card
         </button>
       </form>

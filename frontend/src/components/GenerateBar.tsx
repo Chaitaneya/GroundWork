@@ -91,12 +91,12 @@ export default function GenerateBar({
   const stage = stages[Math.min(Math.floor(elapsed / STAGE_SECONDS), stages.length - 1)];
 
   return (
-    <div className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+    <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={onGenerate}
           disabled={active}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400 disabled:opacity-50"
         >
           {active ? "Generating…" : `✨ Generate ${KIND_LABEL[kind]} from documents`}
         </button>
@@ -104,7 +104,7 @@ export default function GenerateBar({
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
-            className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none"
+            className="rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-300 focus:border-violet-500 focus:outline-none"
             title="Quiz difficulty"
           >
             <option value="intro">Intro</option>
@@ -113,7 +113,7 @@ export default function GenerateBar({
           </select>
         )}
         {!active && (
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-zinc-400">
             Grounded in this topic's uploaded material — every item cites its source passages.
           </p>
         )}
@@ -121,24 +121,24 @@ export default function GenerateBar({
 
       {active && (
         <div className="mt-3">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-indigo-100">
-            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-indigo-500" />
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-violet-500" />
           </div>
-          <p className="mt-2 text-sm text-indigo-800">{stage}</p>
+          <p className="mt-2 text-sm text-violet-300">{stage}</p>
           <style>{`@keyframes slide { 0% { margin-left: -33% } 100% { margin-left: 100% } }`}</style>
         </div>
       )}
 
       {job?.status === "done" && (
-        <p className="mt-2 text-sm text-emerald-700">
+        <p className="mt-2 text-sm text-emerald-400">
           Created {job.created_count} item{job.created_count === 1 ? "" : "s"} for your review
           {job.rejected_count > 0 &&
             ` (${job.rejected_count} rejected for failing the source-citation check)`}
           .
         </p>
       )}
-      {job?.status === "failed" && <p className="mt-2 text-sm text-rose-600">{job.error}</p>}
-      {error && <p className="mt-2 text-sm text-rose-600">{error}</p>}
+      {job?.status === "failed" && <p className="mt-2 text-sm text-rose-400">{job.error}</p>}
+      {error && <p className="mt-2 text-sm text-rose-400">{error}</p>}
     </div>
   );
 }

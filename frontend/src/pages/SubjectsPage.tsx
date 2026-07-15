@@ -69,11 +69,11 @@ export default function SubjectsPage() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">Your subjects</h2>
-        {subjects === null && !error && <p className="text-slate-500">Loading…</p>}
-        {error && <p className="mb-3 text-sm text-rose-600">{error}</p>}
+        <h2 className="mb-4 text-xl font-semibold text-zinc-100">Your subjects</h2>
+        {subjects === null && !error && <p className="text-zinc-400">Loading…</p>}
+        {error && <p className="mb-3 text-sm text-rose-400">{error}</p>}
         {subjects !== null && subjects.length === 0 && (
-          <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
+          <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
             No subjects yet — create your first one below.
           </p>
         )}
@@ -81,7 +81,7 @@ export default function SubjectsPage() {
           {(subjects ?? []).map((s) => (
             <li
               key={s.id}
-              className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-indigo-300"
+              className="group rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm transition hover:border-violet-500/50"
             >
               {draft?.id === s.id ? (
                 <form onSubmit={onSaveEdit} className="space-y-2">
@@ -90,26 +90,26 @@ export default function SubjectsPage() {
                     maxLength={200}
                     value={draft.name}
                     onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-1.5 focus:border-indigo-500 focus:outline-none"
+                    className="w-full rounded-lg border border-zinc-700 px-3 py-1.5 focus:border-violet-500 focus:outline-none"
                   />
                   <input
                     maxLength={2000}
                     placeholder="Description (optional)"
                     value={draft.description}
                     onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-                    className="w-full rounded-lg border border-slate-300 px-3 py-1.5 focus:border-indigo-500 focus:outline-none"
+                    className="w-full rounded-lg border border-zinc-700 px-3 py-1.5 focus:border-violet-500 focus:outline-none"
                   />
                   <div className="flex gap-2">
                     <button
                       type="submit"
-                      className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                      className="rounded-lg bg-violet-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-400"
                     >
                       Save
                     </button>
                     <button
                       type="button"
                       onClick={() => setDraft(null)}
-                      className="rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900"
+                      className="rounded-lg px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-100"
                     >
                       Cancel
                     </button>
@@ -118,13 +118,13 @@ export default function SubjectsPage() {
               ) : (
                 <div className="flex items-start justify-between gap-2">
                   <Link to={`/subjects/${s.id}`} className="min-w-0 flex-1">
-                    <h3 className="truncate font-semibold text-slate-900 group-hover:text-indigo-700">
+                    <h3 className="truncate font-semibold text-zinc-100 group-hover:text-violet-300">
                       {s.name}
                     </h3>
                     {s.description && (
-                      <p className="mt-1 line-clamp-2 text-sm text-slate-500">{s.description}</p>
+                      <p className="mt-1 line-clamp-2 text-sm text-zinc-400">{s.description}</p>
                     )}
-                    <p className="mt-2 text-xs font-medium text-slate-400">
+                    <p className="mt-2 text-xs font-medium text-zinc-500">
                       {s.topic_count} {s.topic_count === 1 ? "topic" : "topics"}
                     </p>
                   </Link>
@@ -133,14 +133,14 @@ export default function SubjectsPage() {
                       onClick={() =>
                         setDraft({ id: s.id, name: s.name, description: s.description })
                       }
-                      className="text-sm text-slate-400 hover:text-indigo-600"
+                      className="text-sm text-zinc-500 hover:text-violet-300"
                       title="Edit subject"
                     >
                       ✎
                     </button>
                     <button
                       onClick={() => onDelete(s.id)}
-                      className="text-sm text-slate-400 hover:text-rose-600"
+                      className="text-sm text-zinc-500 hover:text-rose-400"
                       title="Delete subject"
                     >
                       ✕
@@ -154,26 +154,26 @@ export default function SubjectsPage() {
       </section>
 
       <section className="max-w-md">
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">Add a subject</h2>
-        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-xl font-semibold text-zinc-100">Add a subject</h2>
+        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
           <input
             required
             maxLength={200}
             placeholder="Subject name, e.g. Operating Systems"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-lg border border-zinc-700 px-3 py-2 focus:border-violet-500 focus:outline-none"
           />
           <input
             maxLength={2000}
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-lg border border-zinc-700 px-3 py-2 focus:border-violet-500 focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+            className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400"
           >
             Add subject
           </button>

@@ -84,11 +84,11 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
   }
 
   const inputCls =
-    "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none";
+    "w-full rounded-lg border border-zinc-700 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none";
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h4 className="font-semibold text-slate-900">Add a question</h4>
+    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+      <h4 className="font-semibold text-zinc-100">Add a question</h4>
       <div className="flex gap-2">
         {(["mcq", "true_false", "short_answer"] as const).map((t) => (
           <button
@@ -96,7 +96,7 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
             type="button"
             onClick={() => setQtype(t)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-              qtype === t ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              qtype === t ? "bg-violet-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
             }`}
           >
             {t === "mcq" ? "Multiple choice" : t === "true_false" ? "True / False" : "Short answer"}
@@ -124,12 +124,12 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
               />
             </div>
           ))}
-          <p className="text-xs text-slate-400">Select the radio next to the correct option.</p>
+          <p className="text-xs text-zinc-500">Select the radio next to the correct option.</p>
         </div>
       )}
 
       {qtype === "true_false" && (
-        <div className="flex items-center gap-4 text-sm text-slate-700">
+        <div className="flex items-center gap-4 text-sm text-zinc-300">
           Correct answer:
           {(["True", "False"] as const).map((v) => (
             <label key={v} className="flex items-center gap-1">
@@ -144,8 +144,8 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
       )}
 
       <input placeholder="Explanation shown after answering (optional)" value={explanation} onChange={(e) => setExplanation(e.target.value)} className={inputCls} />
-      {error && <p className="text-sm text-rose-600">{error}</p>}
-      <button type="submit" className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+      {error && <p className="text-sm text-rose-400">{error}</p>}
+      <button type="submit" className="rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400">
         Add question
       </button>
     </form>
@@ -191,12 +191,12 @@ export default function QuizPage() {
   if (error && !quiz) {
     return (
       <div>
-        <p className="text-rose-600">{error}</p>
-        <Link to="/" className="text-indigo-600 hover:underline">← Back</Link>
+        <p className="text-rose-400">{error}</p>
+        <Link to="/subjects" className="text-violet-400 hover:underline">← Back</Link>
       </div>
     );
   }
-  if (!quiz) return <p className="text-slate-500">Loading…</p>;
+  if (!quiz) return <p className="text-zinc-400">Loading…</p>;
 
   const revealAnswers = mode === "edit"; // never in overview/take
   const resultFor = (qid: number) => result?.results.find((r) => r.question_id === qid);
@@ -204,13 +204,13 @@ export default function QuizPage() {
   return (
     <div className="space-y-8">
       <div>
-        <Link to={`/topics/${quiz.topic_id}`} className="text-sm text-indigo-600 hover:underline">
+        <Link to={`/topics/${quiz.topic_id}`} className="text-sm text-violet-400 hover:underline">
           ← Back to topic
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">{quiz.title}</h2>
-            <p className="text-sm text-slate-500">
+            <h2 className="text-2xl font-bold text-zinc-100">{quiz.title}</h2>
+            <p className="text-sm text-zinc-400">
               {quiz.questions.length} question{quiz.questions.length === 1 ? "" : "s"}
               {mode === "edit" && " · editing (correct answers visible)"}
             </p>
@@ -221,14 +221,14 @@ export default function QuizPage() {
                 {quiz.questions.length > 0 && (
                   <button
                     onClick={startTaking}
-                    className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+                    className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400"
                   >
                     Take quiz
                   </button>
                 )}
                 <button
                   onClick={() => setMode("edit")}
-                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 font-medium text-zinc-300 hover:bg-zinc-800"
                 >
                   Edit
                 </button>
@@ -237,13 +237,13 @@ export default function QuizPage() {
             {mode === "edit" && (
               <button
                 onClick={() => setMode("overview")}
-                className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+                className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400"
               >
                 Done editing
               </button>
             )}
             {mode === "take" && (
-              <button onClick={() => setMode("overview")} className="text-sm text-slate-500 hover:text-slate-900">
+              <button onClick={() => setMode("overview")} className="text-sm text-zinc-400 hover:text-zinc-100">
                 Cancel
               </button>
             )}
@@ -251,13 +251,13 @@ export default function QuizPage() {
               <div className="flex gap-2">
                 <button
                   onClick={startTaking}
-                  className="rounded-lg border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 hover:bg-slate-50"
+                  className="rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 font-medium text-zinc-300 hover:bg-zinc-800"
                 >
                   Retake
                 </button>
                 <button
                   onClick={() => setMode("overview")}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
+                  className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400"
                 >
                   Done
                 </button>
@@ -266,14 +266,14 @@ export default function QuizPage() {
           </div>
         </div>
         {mode === "result" && result && (
-          <p className="mt-2 text-lg font-semibold text-slate-900">
-            Score: <span className={result.score_pct >= 60 ? "text-emerald-600" : "text-rose-600"}>{result.score_pct}%</span>
+          <p className="mt-2 text-lg font-semibold text-zinc-100">
+            Score: <span className={result.score_pct >= 60 ? "text-emerald-400" : "text-rose-400"}>{result.score_pct}%</span>
           </p>
         )}
       </div>
 
       {quiz.questions.length === 0 && mode !== "edit" && (
-        <p className="rounded-lg border border-dashed border-slate-300 p-6 text-center text-slate-500">
+        <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
           This quiz has no questions yet — hit Edit to add some.
         </p>
       )}
@@ -282,11 +282,11 @@ export default function QuizPage() {
         {quiz.questions.map((q, qi) => {
           const r = resultFor(q.id);
           return (
-            <li key={q.id} className={`rounded-xl border bg-white p-5 shadow-sm ${
-              r ? (r.is_correct ? "border-emerald-300" : "border-rose-300") : "border-slate-200"
+            <li key={q.id} className={`rounded-xl border bg-zinc-900 p-5 shadow-sm ${
+              r ? (r.is_correct ? "border-emerald-500/40" : "border-rose-500/40") : "border-zinc-800"
             }`}>
               <div className="flex items-start justify-between gap-3">
-                <p className="font-medium text-slate-900">
+                <p className="font-medium text-zinc-100">
                   {qi + 1}. {q.prompt}
                 </p>
                 {mode === "edit" && (
@@ -296,7 +296,7 @@ export default function QuizPage() {
                       await deleteQuestion(q.id);
                       reload();
                     }}
-                    className="text-sm text-slate-400 hover:text-rose-600"
+                    className="text-sm text-zinc-500 hover:text-rose-400"
                     title="Delete question"
                   >
                     ✕
@@ -311,9 +311,9 @@ export default function QuizPage() {
                     <label
                       key={o.id}
                       className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                        mode === "take" ? "cursor-pointer hover:bg-slate-50" : ""
-                      } ${revealAnswers && o.is_correct ? "bg-emerald-50 font-medium text-emerald-800" : "text-slate-700"} ${
-                        r && answers[q.id] === String(o.id) ? (r.is_correct ? "bg-emerald-50" : "bg-rose-50") : ""
+                        mode === "take" ? "cursor-pointer hover:bg-zinc-800" : ""
+                      } ${revealAnswers && o.is_correct ? "bg-emerald-500/10 font-medium text-emerald-300" : "text-zinc-300"} ${
+                        r && answers[q.id] === String(o.id) ? (r.is_correct ? "bg-emerald-500/10" : "bg-rose-500/10") : ""
                       }`}
                     >
                       {mode === "take" ? (
@@ -335,12 +335,12 @@ export default function QuizPage() {
                   placeholder="Your answer"
                   value={answers[q.id] ?? ""}
                   onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                  className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="mt-3 w-full rounded-lg border border-zinc-700 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none"
                 />
               ) : (
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-zinc-400">
                   {revealAnswers ? (
-                    <>Answer: <span className="font-medium text-slate-700">{q.answer_text}</span></>
+                    <>Answer: <span className="font-medium text-zinc-300">{q.answer_text}</span></>
                   ) : mode === "result" ? (
                     `Your answer: ${answers[q.id] || "—"}`
                   ) : (
@@ -357,11 +357,11 @@ export default function QuizPage() {
 
               {/* result feedback */}
               {r && (
-                <div className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm">
-                  <p className={r.is_correct ? "font-medium text-emerald-700" : "font-medium text-rose-700"}>
+                <div className="mt-3 rounded-lg bg-zinc-950 px-3 py-2 text-sm">
+                  <p className={r.is_correct ? "font-medium text-emerald-400" : "font-medium text-rose-400"}>
                     {r.is_correct ? "Correct" : `Incorrect — correct answer: ${r.correct_answer}`}
                   </p>
-                  {r.explanation && <p className="mt-1 text-slate-600">{r.explanation}</p>}
+                  {r.explanation && <p className="mt-1 text-zinc-400">{r.explanation}</p>}
                 </div>
               )}
             </li>
@@ -370,7 +370,7 @@ export default function QuizPage() {
       </ol>
 
       {mode === "take" && (
-        <button onClick={onSubmitAttempt} className="w-full max-w-md rounded-xl bg-indigo-600 py-3 font-medium text-white hover:bg-indigo-700">
+        <button onClick={onSubmitAttempt} className="w-full max-w-md rounded-xl bg-violet-500 py-3 font-medium text-white hover:bg-violet-400">
           Submit answers
         </button>
       )}
@@ -379,8 +379,8 @@ export default function QuizPage() {
 
       {mode === "overview" && attempts.length > 0 && (
         <section>
-          <h4 className="mb-2 font-semibold text-slate-900">Past attempts</h4>
-          <ul className="space-y-1 text-sm text-slate-600">
+          <h4 className="mb-2 font-semibold text-zinc-100">Past attempts</h4>
+          <ul className="space-y-1 text-sm text-zinc-400">
             {attempts.map((a) => (
               <li key={a.id}>
                 {new Date(a.started_at).toLocaleString()} — <span className="font-medium">{a.score_pct}%</span>
