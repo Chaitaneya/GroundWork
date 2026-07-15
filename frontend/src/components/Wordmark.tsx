@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 
-/** Two-tone wordmark: "Ground" in white, "Work" in violet.
+/** Two-tone wordmark: "Ground" in white, "Work" in teal.
  *  With merge=true, scrolling collapses "round"/"ork" so GroundWork → GW. */
 export default function Wordmark({ merge = false }: { merge?: boolean }) {
   const { scrollY } = useScroll();
@@ -11,21 +11,21 @@ export default function Wordmark({ merge = false }: { merge?: boolean }) {
   const inner = "inline-block overflow-hidden whitespace-nowrap align-bottom";
   return (
     <span className="font-display text-2xl font-bold tracking-tight select-none">
-      <span className="text-zinc-100">G</span>
+      <span className="text-slate-100">G</span>
       {merge ? (
-        <motion.span style={{ maxWidth: roundW, opacity: fade }} className={`${inner} text-zinc-100`}>
+        <motion.span style={{ maxWidth: roundW, opacity: fade }} className={`${inner} text-slate-100`}>
           round
         </motion.span>
       ) : (
-        <span className="text-zinc-100">round</span>
+        <span className="text-slate-100">round</span>
       )}
-      <span className="text-violet-400">W</span>
+      <span className="text-teal-300">W</span>
       {merge ? (
-        <motion.span style={{ maxWidth: orkW, opacity: fade }} className={`${inner} text-violet-400`}>
+        <motion.span style={{ maxWidth: orkW, opacity: fade }} className={`${inner} text-teal-300`}>
           ork
         </motion.span>
       ) : (
-        <span className="text-violet-400">ork</span>
+        <span className="text-teal-300">ork</span>
       )}
     </span>
   );

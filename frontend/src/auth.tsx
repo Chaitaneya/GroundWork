@@ -58,7 +58,7 @@ export function useAuth(): AuthContextValue {
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, initializing } = useAuth();
   if (initializing) {
-    return <p className="p-8 text-zinc-400">Loading…</p>;
+    return <p className="p-8 text-slate-400">Loading…</p>;
   }
   if (!user) {
     return <Navigate to="/login" replace />;

@@ -9,15 +9,54 @@
 }
 
 @layer base {
+  html {
+    color-scheme: dark;
+  }
   body {
-    @apply bg-zinc-950 font-sans text-zinc-200 antialiased;
+    /* deep teal-black base; the aurora rides above it, fixed */
+    @apply bg-[#04120f] font-sans text-slate-200 antialiased;
+  }
+  /* Aurora: soft drifting light blobs behind everything, so frosted glass
+     panels have color to refract. Fixed = doesn't scroll away. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 44% at 12% 8%, rgba(45, 212, 191, 0.22), transparent 60%),
+      radial-gradient(36% 42% at 88% 12%, rgba(34, 211, 238, 0.20), transparent 60%),
+      radial-gradient(46% 48% at 78% 92%, rgba(16, 185, 129, 0.16), transparent 62%),
+      radial-gradient(42% 44% at 18% 88%, rgba(56, 189, 248, 0.14), transparent 62%);
   }
   input,
   textarea,
   select {
-    @apply bg-zinc-900 text-zinc-100 placeholder:text-zinc-500;
+    @apply bg-white/5 text-slate-100 placeholder:text-slate-500;
   }
   ::selection {
-    @apply bg-violet-500/40;
+    @apply bg-teal-400/30;
+  }
+}
+
+@layer components {
+  /* Frosted glass surface — the app's core panel. */
+  .glass {
+    @apply rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl;
+  }
+  .glass-hover {
+    @apply transition hover:border-teal-300/30 hover:bg-white/[0.09];
+  }
+  /* Glass input field. */
+  .field {
+    @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100 backdrop-blur-md transition placeholder:text-slate-500 focus:border-teal-300/50 focus:bg-white/[0.08] focus:outline-none;
+  }
+  /* Primary action — teal→cyan gradient. */
+  .btn-primary {
+    @apply rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-[#04120f] shadow-[0_4px_20px_rgba(45,212,191,0.35)] transition hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply rounded-xl border border-white/15 bg-white/5 px-4 py-2 font-medium text-slate-200 backdrop-blur-md transition hover:bg-white/10;
   }
 }

@@ -14,10 +14,10 @@ import TopicPage from "./pages/TopicPage";
 
 function NotFoundPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 px-4">
-      <h1 className="font-display text-6xl font-bold text-zinc-700">404</h1>
-      <p className="mt-2 text-zinc-400">This page doesn't exist.</p>
-      <Link to="/" className="mt-4 font-medium text-violet-400 hover:underline">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-transparent px-4">
+      <h1 className="font-display text-6xl font-bold text-slate-700">404</h1>
+      <p className="mt-2 text-slate-400">This page doesn't exist.</p>
+      <Link to="/" className="mt-4 font-medium text-teal-300 hover:underline">
         ← Take me home
       </Link>
     </main>
@@ -33,10 +33,10 @@ function HomeGate() {
 
 function Layout() {
   const { user, signOut } = useAuth();
-  const nav = "font-medium text-zinc-400 transition hover:text-zinc-100";
+  const nav = "font-medium text-slate-400 transition hover:text-slate-100";
   return (
-    <div className="min-h-screen bg-zinc-950">
-      <header className="sticky top-0 z-40 border-b border-zinc-800/60 bg-zinc-950/70 backdrop-blur-md">
+    <div className="min-h-screen bg-transparent">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-white/5 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <Link to="/dashboard">
             <Wordmark />
@@ -48,11 +48,11 @@ function Layout() {
             <Link to="/subjects" className={nav}>
               Subjects
             </Link>
-            <Link to="/review" className="font-medium text-violet-400 transition hover:text-violet-300">
+            <Link to="/review" className="font-medium text-teal-300 transition hover:text-teal-200">
               Review
             </Link>
-            <span className="hidden text-zinc-500 sm:inline">{user?.display_name}</span>
-            <button onClick={signOut} className="text-zinc-500 hover:text-zinc-100">
+            <span className="hidden text-slate-500 sm:inline">{user?.display_name}</span>
+            <button onClick={signOut} className="text-slate-500 hover:text-slate-100">
               Sign out
             </button>
           </div>

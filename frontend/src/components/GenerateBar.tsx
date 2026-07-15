@@ -91,12 +91,12 @@ export default function GenerateBar({
   const stage = stages[Math.min(Math.floor(elapsed / STAGE_SECONDS), stages.length - 1)];
 
   return (
-    <div className="rounded-xl border border-violet-500/20 bg-violet-500/10 p-4">
+    <div className="rounded-xl border border-teal-300/20 bg-teal-400/10 p-4">
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={onGenerate}
           disabled={active}
-          className="rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white hover:bg-violet-400 disabled:opacity-50"
+          className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50"
         >
           {active ? "Generating…" : `✨ Generate ${KIND_LABEL[kind]} from documents`}
         </button>
@@ -104,7 +104,7 @@ export default function GenerateBar({
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
-            className="rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1.5 text-sm text-zinc-300 focus:border-violet-500 focus:outline-none"
+            className="rounded-lg border border-white/15 bg-white/[0.06] backdrop-blur-xl px-2 py-1.5 text-sm text-slate-300 focus:border-teal-300 focus:outline-none"
             title="Quiz difficulty"
           >
             <option value="intro">Intro</option>
@@ -113,7 +113,7 @@ export default function GenerateBar({
           </select>
         )}
         {!active && (
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-slate-400">
             Grounded in this topic's uploaded material — every item cites its source passages.
           </p>
         )}
@@ -121,10 +121,10 @@ export default function GenerateBar({
 
       {active && (
         <div className="mt-3">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
-            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-violet-500" />
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
           </div>
-          <p className="mt-2 text-sm text-violet-300">{stage}</p>
+          <p className="mt-2 text-sm text-teal-200">{stage}</p>
           <style>{`@keyframes slide { 0% { margin-left: -33% } 100% { margin-left: 100% } }`}</style>
         </div>
       )}

@@ -50,9 +50,9 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         count={(quizzes ?? []).filter((q) => q.pending).length}
         onChanged={load}
       />
-      {quizzes === null && <p className="text-zinc-400">Loading…</p>}
+      {quizzes === null && <p className="text-slate-400">Loading…</p>}
       {quizzes !== null && quizzes.length === 0 && (
-        <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
+        <p className="rounded-lg border border-dashed border-white/15 p-6 text-center text-slate-400">
           No quizzes yet — create one below, then add questions to it.
         </p>
       )}
@@ -60,12 +60,12 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         {(quizzes ?? []).map((q) => (
           <li
             key={q.id}
-            className={`flex items-center justify-between rounded-lg border bg-zinc-900 px-4 py-3 shadow-sm ${
-              q.pending ? "border-amber-500/40 bg-amber-500/5" : "border-zinc-800"
+            className={`flex items-center justify-between rounded-lg border bg-white/[0.06] backdrop-blur-xl px-4 py-3 shadow-sm ${
+              q.pending ? "border-amber-500/40 bg-amber-500/5" : "border-white/10"
             }`}
           >
             <Link to={`/quizzes/${q.id}`} className="min-w-0 flex-1">
-              <p className="font-medium text-zinc-100 hover:text-violet-300">
+              <p className="font-medium text-slate-100 hover:text-teal-200">
                 {q.title}
                 {q.pending && (
                   <span className="ml-2 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-300">
@@ -73,7 +73,7 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
                   </span>
                 )}
               </p>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-slate-500">
                 {q.question_count} {q.question_count === 1 ? "question" : "questions"}
               </p>
             </Link>
@@ -86,7 +86,7 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
                   Accept
                 </button>
               )}
-              <button onClick={() => onDelete(q.id)} className="text-sm text-zinc-500 hover:text-rose-400" title="Delete quiz">
+              <button onClick={() => onDelete(q.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete quiz">
                 ✕
               </button>
             </div>
@@ -94,16 +94,16 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
+      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
         <input
           required
           maxLength={255}
           placeholder="Quiz title, e.g. Normalization basics"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 rounded-lg border border-zinc-700 px-3 py-2 focus:border-violet-500 focus:outline-none"
+          className="flex-1 rounded-lg border border-white/15 px-3 py-2 focus:border-teal-300 focus:outline-none"
         />
-        <button type="submit" className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400">
+        <button type="submit" className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110">
           Create
         </button>
         {error && <p className="text-sm text-rose-400">{error}</p>}

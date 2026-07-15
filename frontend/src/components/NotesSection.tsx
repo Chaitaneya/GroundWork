@@ -75,9 +75,9 @@ export default function NotesSection({ topicId }: { topicId: number }) {
         count={(notes ?? []).filter((n) => n.pending).length}
         onChanged={load}
       />
-      {notes === null && <p className="text-zinc-400">Loading…</p>}
+      {notes === null && <p className="text-slate-400">Loading…</p>}
       {notes !== null && notes.length === 0 && (
-        <p className="rounded-lg border border-dashed border-zinc-700 p-6 text-center text-zinc-400">
+        <p className="rounded-lg border border-dashed border-white/15 p-6 text-center text-slate-400">
           No notes yet — write your first note below.
         </p>
       )}
@@ -85,8 +85,8 @@ export default function NotesSection({ topicId }: { topicId: number }) {
         {(notes ?? []).map((n) => (
           <li
             key={n.id}
-            className={`rounded-lg border bg-zinc-900 shadow-sm ${
-              n.pending ? "border-amber-500/40" : "border-zinc-800"
+            className={`rounded-lg border bg-white/[0.06] backdrop-blur-xl shadow-sm ${
+              n.pending ? "border-amber-500/40" : "border-white/10"
             }`}
           >
             {editing?.id === n.id ? (
@@ -95,19 +95,19 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                   required
                   value={editing.title}
                   onChange={(e) => setEditing({ ...editing, title: e.target.value })}
-                  className="w-full rounded-lg border border-zinc-700 px-3 py-1.5 focus:border-violet-500 focus:outline-none"
+                  className="w-full rounded-lg border border-white/15 px-3 py-1.5 focus:border-teal-300 focus:outline-none"
                 />
                 <textarea
                   rows={8}
                   value={editing.content}
                   onChange={(e) => setEditing({ ...editing, content: e.target.value })}
-                  className="w-full rounded-lg border border-zinc-700 px-3 py-2 font-mono text-sm focus:border-violet-500 focus:outline-none"
+                  className="w-full rounded-lg border border-white/15 px-3 py-2 font-mono text-sm focus:border-teal-300 focus:outline-none"
                 />
                 <div className="flex gap-2">
-                  <button type="submit" className="rounded-lg bg-violet-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-violet-400">
+                  <button type="submit" className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-3 py-1.5 text-sm font-medium text-white hover:brightness-110">
                     Save
                   </button>
-                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-zinc-400 hover:text-zinc-100">
+                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-slate-400 hover:text-slate-100">
                     Cancel
                   </button>
                 </div>
@@ -117,7 +117,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                 <div className="flex items-center justify-between px-4 py-3">
                   <button
                     onClick={() => setOpenId(openId === n.id ? null : n.id)}
-                    className="min-w-0 flex-1 text-left font-medium text-zinc-100 hover:text-violet-300"
+                    className="min-w-0 flex-1 text-left font-medium text-slate-100 hover:text-teal-200"
                   >
                     {n.title}
                     {n.pending && (
@@ -129,19 +129,19 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                   <div className="ml-3 flex gap-2">
                     <button
                       onClick={() => setEditing({ id: n.id, title: n.title, content: n.content_md })}
-                      className="text-sm text-zinc-500 hover:text-violet-300"
+                      className="text-sm text-slate-500 hover:text-teal-200"
                       title="Edit note"
                     >
                       ✎
                     </button>
-                    <button onClick={() => onDelete(n.id)} className="text-sm text-zinc-500 hover:text-rose-400" title="Delete note">
+                    <button onClick={() => onDelete(n.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete note">
                       ✕
                     </button>
                   </div>
                 </div>
                 {openId === n.id && (
-                  <div className="border-t border-zinc-800 px-4 py-3">
-                    <div className="prose prose-sm max-w-none text-zinc-300 [&_code]:rounded [&_code]:bg-zinc-800 [&_code]:px-1 [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:ml-4 [&_ul]:list-disc">
+                  <div className="border-t border-white/10 px-4 py-3">
+                    <div className="prose prose-sm max-w-none text-slate-300 [&_code]:rounded [&_code]:bg-white/10 [&_code]:px-1 [&_h1]:text-lg [&_h2]:text-base [&_h3]:text-sm [&_li]:ml-4 [&_ul]:list-disc">
                       <ReactMarkdown>{n.content_md || "*This note is empty.*"}</ReactMarkdown>
                     </div>
                     {n.origin === "ai" && (
@@ -159,7 +159,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                         </button>
                         <button
                           onClick={() => onDelete(n.id)}
-                          className="rounded-lg bg-zinc-900 px-3 py-1 text-xs font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
+                          className="rounded-lg bg-white/[0.06] backdrop-blur-xl px-3 py-1 text-xs font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
                         >
                           Discard
                         </button>
@@ -173,25 +173,25 @@ export default function NotesSection({ topicId }: { topicId: number }) {
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-5 shadow-sm">
-        <h4 className="font-semibold text-zinc-100">Add a note</h4>
+      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+        <h4 className="font-semibold text-slate-100">Add a note</h4>
         <input
           required
           maxLength={255}
           placeholder="Note title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-lg border border-zinc-700 px-3 py-2 focus:border-violet-500 focus:outline-none"
+          className="w-full rounded-lg border border-white/15 px-3 py-2 focus:border-teal-300 focus:outline-none"
         />
         <textarea
           rows={6}
           placeholder="Write in Markdown — # headings, **bold**, - lists…"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full rounded-lg border border-zinc-700 px-3 py-2 font-mono text-sm focus:border-violet-500 focus:outline-none"
+          className="w-full rounded-lg border border-white/15 px-3 py-2 font-mono text-sm focus:border-teal-300 focus:outline-none"
         />
         {error && <p className="text-sm text-rose-400">{error}</p>}
-        <button type="submit" className="rounded-lg bg-violet-500 px-4 py-2 font-medium text-white hover:bg-violet-400">
+        <button type="submit" className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110">
           Add note
         </button>
       </form>
