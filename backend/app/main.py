@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 from .config import settings
 from .db import get_engine
-from .routers import auth, documents, subjects, topics
+from .routers import auth, documents, flashcards, notes, quizzes, subjects, topics
 
 app = FastAPI(title="Groundwork API")
 
@@ -12,6 +12,9 @@ app.include_router(auth.router)
 app.include_router(subjects.router)
 app.include_router(topics.router)
 app.include_router(documents.router)
+app.include_router(notes.router)
+app.include_router(flashcards.router)
+app.include_router(quizzes.router)
 
 # The browser blocks JS on localhost:5173 from calling localhost:8000 unless
 # this API explicitly allows that origin — that's CORS.

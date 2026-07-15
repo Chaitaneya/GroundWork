@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
+import FlashcardsSection from "../components/FlashcardsSection";
+import NotesSection from "../components/NotesSection";
+import QuizzesSection from "../components/QuizzesSection";
 import {
   ApiError,
   deleteDocument,
@@ -25,10 +28,14 @@ function StatusBadge({ status }: { status: Document["status"] }) {
   );
 }
 
+const TABS = ["Documents", "Notes", "Flashcards", "Quizzes"] as const;
+type Tab = (typeof TABS)[number];
+
 export default function TopicPage() {
   const { topicId } = useParams();
   const id = Number(topicId);
 
+  const [tab, setTab] = useState<Tab>("Documents");
   const [topic, setTopic] = useState<Topic | null>(null);
   const [documents, setDocuments] = useState<Document[] | null>(null);
   const [chunks, setChunks] = useState<Chunk[] | null>(null);
@@ -105,7 +112,27 @@ export default function TopicPage() {
         {topic?.description && <p className="mt-1 text-slate-500">{topic.description}</p>}
       </div>
 
-      <section>
+      <nav className="flex gap-1 border-b border-slate-200">
+        {TABS.map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`rounded-t-lg px-4 py-2 text-sm font-medium ${
+              tab === t
+                ? "border border-b-0 border-slate-200 bg-white text-indigo-700"
+                : "text-slate-500 hover:text-slate-900"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </nav>
+
+      {tab === "Notes" && <NotesSection topicId={id} />}
+      {tab === "Flashcards" && <FlashcardsSection topicId={id} />}
+      {tab === "Quizzes" && <QuizzesSection topicId={id} />}
+
+      <section className={tab === "Documents" ? "" : "hidden"}>
         <h3 className="mb-4 text-lg font-semibold text-slate-900">Reading material</h3>
 
         <form

@@ -1,6 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, UniqueConstraint, func
+from sqlalchemy import (
+    DateTime,
+    Float,
+    ForeignKey,
+    SmallInteger,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
@@ -87,6 +96,152 @@ class Document(Base):
         cascade="all, delete-orphan",
         order_by="DocumentChunk.chunk_index",
     )
+
+
+class Note(Base):
+    __tablename__ = "notes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(255))
+    content_md: Mapped[str] = mapped_column(Text, default="")
+    origin: Mapped[str] = mapped_column(String(10), default="manual")  # manual | ai
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class Flashcard(Base):
+    """A card plus its SM-2 scheduling state. State lives on the card
+    (not a separate table) because cards belong to exactly one user."""
+
+    __tablename__ = "flashcards"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"))
+    front: Mapped[str] = mapped_column(Text)
+    back: Mapped[str] = mapped_column(Text)
+    origin: Mapped[str] = mapped_column(String(10), default="manual")
+
+    # SM-2 state — see app/sm2.py
+    ease_factor: Mapped[float] = mapped_column(Float, default=2.5)
+    interval_days: Mapped[float] = mapped_column(Float, default=0.0)
+    repetitions: Mapped[int] = mapped_column(default=0)
+    lapses: Mapped[int] = mapped_column(default=0)
+    due_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()  # new cards: due now
+    )
+    suspended: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="flashcard", cascade="all, delete-orphan"
+    )
+
+
+class Review(Base):
+    """Append-only log of every review. Powers analytics (Phase 5) and a
+    future FSRS upgrade — never updated, only inserted."""
+
+    __tablename__ = "reviews"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    flashcard_id: Mapped[int] = mapped_column(
+        ForeignKey("flashcards.id", ondelete="CASCADE"), index=True
+    )
+    rating: Mapped[int] = mapped_column(SmallInteger)  # 1=Again 2=Hard 3=Good 4=Easy
+    reviewed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    interval_before: Mapped[float] = mapped_column(Float)
+    interval_after: Mapped[float] = mapped_column(Float)
+    ease_after: Mapped[float] = mapped_column(Float)
+
+    flashcard: Mapped[Flashcard] = relationship(back_populates="reviews")
+
+
+class Quiz(Base):
+    __tablename__ = "quizzes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id", ondelete="CASCADE"))
+    title: Mapped[str] = mapped_column(String(255))
+    origin: Mapped[str] = mapped_column(String(10), default="manual")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    questions: Mapped[list["Question"]] = relationship(
+        back_populates="quiz", cascade="all, delete-orphan", order_by="Question.position"
+    )
+    attempts: Mapped[list["QuizAttempt"]] = relationship(
+        back_populates="quiz", cascade="all, delete-orphan"
+    )
+
+
+class Question(Base):
+    __tablename__ = "questions"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    quiz_id: Mapped[int] = mapped_column(ForeignKey("quizzes.id", ondelete="CASCADE"))
+    qtype: Mapped[str] = mapped_column(String(20))  # mcq | true_false | short_answer
+    prompt: Mapped[str] = mapped_column(Text)
+    answer_text: Mapped[str | None] = mapped_column(Text)  # short_answer only
+    explanation: Mapped[str] = mapped_column(Text, default="")
+    origin: Mapped[str] = mapped_column(String(10), default="manual")
+    position: Mapped[int] = mapped_column(default=0)
+
+    quiz: Mapped[Quiz] = relationship(back_populates="questions")
+    options: Mapped[list["QuestionOption"]] = relationship(
+        back_populates="question", cascade="all, delete-orphan", order_by="QuestionOption.id"
+    )
+
+
+class QuestionOption(Base):
+    __tablename__ = "question_options"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    question_id: Mapped[int] = mapped_column(ForeignKey("questions.id", ondelete="CASCADE"))
+    option_text: Mapped[str] = mapped_column(Text)
+    is_correct: Mapped[bool] = mapped_column(default=False)
+
+    question: Mapped[Question] = relationship(back_populates="options")
+
+
+class QuizAttempt(Base):
+    __tablename__ = "quiz_attempts"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    quiz_id: Mapped[int] = mapped_column(ForeignKey("quizzes.id", ondelete="CASCADE"))
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    score_pct: Mapped[float | None] = mapped_column(Float)
+
+    quiz: Mapped[Quiz] = relationship(back_populates="attempts")
+    answers: Mapped[list["AttemptAnswer"]] = relationship(
+        back_populates="attempt", cascade="all, delete-orphan"
+    )
+
+
+class AttemptAnswer(Base):
+    __tablename__ = "attempt_answers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    attempt_id: Mapped[int] = mapped_column(
+        ForeignKey("quiz_attempts.id", ondelete="CASCADE")
+    )
+    question_id: Mapped[int] = mapped_column(ForeignKey("questions.id", ondelete="CASCADE"))
+    given_answer: Mapped[str] = mapped_column(String(1000))
+    is_correct: Mapped[bool] = mapped_column(default=False)
+
+    attempt: Mapped[QuizAttempt] = relationship(back_populates="answers")
 
 
 class DocumentChunk(Base):

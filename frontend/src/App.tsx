@@ -15,6 +15,8 @@ import { AuthProvider, RequireAuth, useAuth } from "./auth";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import StatusPage from "./pages/StatusPage";
+import QuizPage from "./pages/QuizPage";
+import ReviewPage from "./pages/ReviewPage";
 import SubjectPage from "./pages/SubjectPage";
 import SubjectsPage from "./pages/SubjectsPage";
 import TopicPage from "./pages/TopicPage";
@@ -29,6 +31,9 @@ function Layout() {
             Groundwork
           </Link>
           <div className="flex items-center gap-4 text-sm">
+            <Link to="/review" className="font-medium text-indigo-600 hover:underline">
+              Review
+            </Link>
             <span className="text-slate-500">{user?.display_name}</span>
             <button onClick={signOut} className="text-slate-500 hover:text-slate-900">
               Sign out
@@ -61,6 +66,8 @@ export default function App() {
             <Route index element={<SubjectsPage />} />
             <Route path="/subjects/:subjectId" element={<SubjectPage />} />
             <Route path="/topics/:topicId" element={<TopicPage />} />
+            <Route path="/quizzes/:quizId" element={<QuizPage />} />
+            <Route path="/review" element={<ReviewPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

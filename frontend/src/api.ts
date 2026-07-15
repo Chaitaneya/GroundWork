@@ -184,6 +184,132 @@ export const deleteDocument = (id: number) =>
 export const listDocumentChunks = (documentId: number) =>
   request<Chunk[]>(`/api/documents/${documentId}/chunks`);
 
+// ---------- notes ----------
+
+export interface Note {
+  id: number;
+  topic_id: number;
+  title: string;
+  content_md: string;
+  origin: "manual" | "ai";
+  created_at: string;
+  updated_at: string;
+}
+
+export const listNotes = (topicId: number) => request<Note[]>(`/api/topics/${topicId}/notes`);
+export const createNote = (topicId: number, title: string, content_md: string) =>
+  postJson<Note>(`/api/topics/${topicId}/notes`, { title, content_md });
+export const updateNote = (id: number, fields: { title?: string; content_md?: string }) =>
+  patchJson<Note>(`/api/notes/${id}`, fields);
+export const deleteNote = (id: number) => request<void>(`/api/notes/${id}`, { method: "DELETE" });
+
+// ---------- flashcards & review ----------
+
+export interface Flashcard {
+  id: number;
+  topic_id: number;
+  front: string;
+  back: string;
+  origin: "manual" | "ai";
+  ease_factor: number;
+  interval_days: number;
+  repetitions: number;
+  lapses: number;
+  due_at: string;
+  suspended: boolean;
+  created_at: string;
+}
+
+export interface QueueCard extends Flashcard {
+  topic_name: string;
+  subject_name: string;
+}
+
+export const listFlashcards = (topicId: number) =>
+  request<Flashcard[]>(`/api/topics/${topicId}/flashcards`);
+export const createFlashcard = (topicId: number, front: string, back: string) =>
+  postJson<Flashcard>(`/api/topics/${topicId}/flashcards`, { front, back });
+export const updateFlashcard = (id: number, fields: { front?: string; back?: string; suspended?: boolean }) =>
+  patchJson<Flashcard>(`/api/flashcards/${id}`, fields);
+export const deleteFlashcard = (id: number) =>
+  request<void>(`/api/flashcards/${id}`, { method: "DELETE" });
+export const reviewFlashcard = (id: number, rating: 1 | 2 | 3 | 4) =>
+  postJson<Flashcard>(`/api/flashcards/${id}/review`, { rating });
+export const fetchReviewQueue = () => request<QueueCard[]>("/api/review/queue");
+
+// ---------- quizzes ----------
+
+export interface QuestionOption {
+  id: number;
+  option_text: string;
+  is_correct: boolean;
+}
+
+export interface Question {
+  id: number;
+  qtype: "mcq" | "true_false" | "short_answer";
+  prompt: string;
+  answer_text: string | null;
+  explanation: string;
+  origin: string;
+  position: number;
+  options: QuestionOption[];
+}
+
+export interface Quiz {
+  id: number;
+  topic_id: number;
+  title: string;
+  origin: string;
+  created_at: string;
+  question_count: number;
+}
+
+export interface QuizDetail extends Quiz {
+  questions: Question[];
+}
+
+export interface QuestionResult {
+  question_id: number;
+  is_correct: boolean;
+  correct_answer: string;
+  explanation: string;
+}
+
+export interface AttemptResult {
+  id: number;
+  score_pct: number;
+  results: QuestionResult[];
+}
+
+export interface Attempt {
+  id: number;
+  started_at: string;
+  score_pct: number | null;
+}
+
+export interface NewQuestion {
+  qtype: Question["qtype"];
+  prompt: string;
+  options: { option_text: string; is_correct: boolean }[];
+  answer_text: string | null;
+  explanation: string;
+}
+
+export const listQuizzes = (topicId: number) => request<Quiz[]>(`/api/topics/${topicId}/quizzes`);
+export const createQuiz = (topicId: number, title: string) =>
+  postJson<Quiz>(`/api/topics/${topicId}/quizzes`, { title });
+export const getQuiz = (id: number) => request<QuizDetail>(`/api/quizzes/${id}`);
+export const deleteQuiz = (id: number) => request<void>(`/api/quizzes/${id}`, { method: "DELETE" });
+export const addQuestion = (quizId: number, q: NewQuestion) =>
+  postJson<Question>(`/api/quizzes/${quizId}/questions`, q);
+export const deleteQuestion = (id: number) =>
+  request<void>(`/api/questions/${id}`, { method: "DELETE" });
+export const submitAttempt = (quizId: number, answers: { question_id: number; given_answer: string }[]) =>
+  postJson<AttemptResult>(`/api/quizzes/${quizId}/attempts`, { answers });
+export const listAttempts = (quizId: number) =>
+  request<Attempt[]>(`/api/quizzes/${quizId}/attempts`);
+
 // ---------- status page ----------
 
 export const fetchHealth = () => request<HealthResponse>("/api/health");
