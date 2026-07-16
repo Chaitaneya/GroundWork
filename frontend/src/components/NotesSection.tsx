@@ -13,6 +13,7 @@ import {
 import GenerateBar from "./GenerateBar";
 import PendingBanner from "./PendingBanner";
 import SourcesView from "./SourcesView";
+import { PencilIcon, XIcon } from "./icons";
 
 export default function NotesSection({ topicId }: { topicId: number }) {
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -85,7 +86,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
         {(notes ?? []).map((n) => (
           <li
             key={n.id}
-            className={`rounded-lg border bg-white/[0.06] backdrop-blur-xl shadow-sm ${
+            className={`rounded-lg border bg-white/[0.06] shadow-sm ${
               n.pending ? "border-amber-500/40" : "border-white/10"
             }`}
           >
@@ -131,12 +132,8 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                       onClick={() => setEditing({ id: n.id, title: n.title, content: n.content_md })}
                       className="text-sm text-slate-500 hover:text-teal-200"
                       title="Edit note"
-                    >
-                      ✎
-                    </button>
-                    <button onClick={() => onDelete(n.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete note">
-                      ✕
-                    </button>
+                    ><PencilIcon /></button>
+                    <button onClick={() => onDelete(n.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete note"><XIcon /></button>
                   </div>
                 </div>
                 {openId === n.id && (
@@ -159,7 +156,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
                         </button>
                         <button
                           onClick={() => onDelete(n.id)}
-                          className="rounded-lg bg-white/[0.06] backdrop-blur-xl px-3 py-1 text-xs font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
+                          className="rounded-lg bg-white/[0.06] px-3 py-1 text-xs font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
                         >
                           Discard
                         </button>
@@ -173,7 +170,7 @@ export default function NotesSection({ topicId }: { topicId: number }) {
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+      <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
         <h4 className="font-semibold text-slate-100">Add a note</h4>
         <input
           required

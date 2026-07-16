@@ -43,7 +43,7 @@ export default function PendingBanner({
         </button>
         <button
           onClick={discardAll}
-          className="rounded-lg bg-white/[0.06] backdrop-blur-xl px-3 py-1.5 text-sm font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
+          className="rounded-lg bg-white/[0.06] px-3 py-1.5 text-sm font-medium text-rose-400 ring-1 ring-rose-500/30 hover:bg-rose-500/10"
         >
           Discard all
         </button>

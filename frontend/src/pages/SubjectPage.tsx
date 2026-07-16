@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { PencilIcon, XIcon } from "../components/icons";
 import { Link, useParams } from "react-router-dom";
 import {
   ApiError,
@@ -101,7 +102,7 @@ export default function SubjectPage() {
           {(topics ?? []).map((t) => (
             <li
               key={t.id}
-              className="rounded-lg border border-white/10 bg-white/[0.06] backdrop-blur-xl px-4 py-3 shadow-sm"
+              className="rounded-lg border border-white/10 bg-white/[0.06] px-4 py-3 shadow-sm"
             >
               {draft?.id === t.id ? (
                 <form onSubmit={onSaveEdit} className="space-y-2">
@@ -150,16 +151,12 @@ export default function SubjectPage() {
                       }
                       className="text-sm text-slate-500 hover:text-teal-200"
                       title="Edit topic"
-                    >
-                      ✎
-                    </button>
+                    ><PencilIcon /></button>
                     <button
                       onClick={() => onDelete(t.id)}
                       className="text-sm text-slate-500 hover:text-rose-400"
                       title="Delete topic"
-                    >
-                      ✕
-                    </button>
+                    ><XIcon /></button>
                   </div>
                 </div>
               )}
@@ -170,7 +167,7 @@ export default function SubjectPage() {
 
       <section className="max-w-md">
         <h3 className="mb-4 text-lg font-semibold text-slate-100">Add a topic</h3>
-        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
           <input
             required
             maxLength={200}

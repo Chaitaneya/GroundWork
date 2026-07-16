@@ -18,7 +18,7 @@ export default function SourcesView({ fetch }: { fetch: () => Promise<Chunk[]> }
         onClick={toggle}
         className="text-xs font-medium text-teal-300 hover:underline"
       >
-        {open ? "Hide sources" : "📄 Show sources"}
+        {open ? "Hide sources" : "Show sources"}
       </button>
       {open && (
         <div className="mt-2 space-y-2">
@@ -32,7 +32,7 @@ export default function SourcesView({ fetch }: { fetch: () => Promise<Chunk[]> }
               className="rounded-lg border-l-2 border-teal-300/40 bg-transparent px-3 py-2"
             >
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                Source · page {c.page_number} · chunk {c.chunk_index + 1}
+                Source · page {c.page_number}
               </p>
               <p className="whitespace-pre-wrap text-xs leading-relaxed text-slate-400">
                 {c.content}

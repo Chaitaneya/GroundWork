@@ -43,20 +43,20 @@
 @layer components {
   /* Frosted glass surface — the app's core panel. */
   .glass {
-    @apply rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)] backdrop-blur-xl;
+    @apply rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)];
   }
   .glass-hover {
     @apply transition hover:border-teal-300/30 hover:bg-white/[0.09];
   }
   /* Glass input field. */
   .field {
-    @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100 backdrop-blur-md transition placeholder:text-slate-500 focus:border-teal-300/50 focus:bg-white/[0.08] focus:outline-none;
+    @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100 transition placeholder:text-slate-500 focus:border-teal-300/50 focus:bg-white/[0.08] focus:outline-none;
   }
   /* Primary action — teal→cyan gradient. */
   .btn-primary {
     @apply rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-[#04120f] shadow-[0_4px_20px_rgba(45,212,191,0.35)] transition hover:brightness-110;
   }
   .btn-ghost {
-    @apply rounded-xl border border-white/15 bg-white/5 px-4 py-2 font-medium text-slate-200 backdrop-blur-md transition hover:bg-white/10;
+    @apply rounded-xl border border-white/15 bg-white/5 px-4 py-2 font-medium text-slate-200 transition hover:bg-white/10;
   }
 }

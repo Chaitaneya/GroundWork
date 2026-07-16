@@ -98,13 +98,13 @@ export default function GenerateBar({
           disabled={active}
           className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50"
         >
-          {active ? "Generating…" : `✨ Generate ${KIND_LABEL[kind]} from documents`}
+          {active ? "Generating…" : `Generate ${KIND_LABEL[kind]} from documents`}
         </button>
         {kind === "quiz" && !active && (
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
-            className="rounded-lg border border-white/15 bg-white/[0.06] backdrop-blur-xl px-2 py-1.5 text-sm text-slate-300 focus:border-teal-300 focus:outline-none"
+            className="rounded-lg border border-white/15 bg-white/[0.06] px-2 py-1.5 text-sm text-slate-300 focus:border-teal-300 focus:outline-none"
             title="Quiz difficulty"
           >
             <option value="intro">Intro</option>

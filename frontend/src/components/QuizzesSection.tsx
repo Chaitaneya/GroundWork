@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { acceptQuiz, ApiError, createQuiz, deleteQuiz, listQuizzes, type Quiz } from "../api";
 import GenerateBar from "./GenerateBar";
 import PendingBanner from "./PendingBanner";
+import { XIcon } from "./icons";
 
 export default function QuizzesSection({ topicId }: { topicId: number }) {
   const [quizzes, setQuizzes] = useState<Quiz[] | null>(null);
@@ -60,7 +61,7 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         {(quizzes ?? []).map((q) => (
           <li
             key={q.id}
-            className={`flex items-center justify-between rounded-lg border bg-white/[0.06] backdrop-blur-xl px-4 py-3 shadow-sm ${
+            className={`flex items-center justify-between rounded-lg border bg-white/[0.06] px-4 py-3 shadow-sm ${
               q.pending ? "border-amber-500/40 bg-amber-500/5" : "border-white/10"
             }`}
           >
@@ -86,15 +87,13 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
                   Accept
                 </button>
               )}
-              <button onClick={() => onDelete(q.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete quiz">
-                ✕
-              </button>
+              <button onClick={() => onDelete(q.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete quiz"><XIcon /></button>
             </div>
           </li>
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
         <input
           required
           maxLength={255}

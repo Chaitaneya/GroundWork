@@ -1,11 +1,12 @@
-from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Response, UploadFile, status
 from sqlalchemy import func, select
 
+from .. import ai
 from ..db import SessionLocal, get_engine
 from ..deps import CurrentUser, DbSession
 from ..ingestion import ExtractionError, ingest_file
 from ..models import Document, DocumentChunk, Subject, Topic
-from ..schemas import ChunkOut, DocumentOut
+from ..schemas import ChatRequest, ChatResponse, ChatSource, ChunkOut, DocumentOut
 from .topics import get_owned_topic
 
 router = APIRouter(prefix="/api", tags=["documents"])
@@ -93,6 +94,7 @@ def upload_document(
         title=filename.rsplit(".", 1)[0][:255],
         original_filename=filename[:255],
         status="processing",
+        file_data=data,  # kept for the in-app viewer
     )
     db.add(document)
     db.commit()
@@ -138,6 +140,64 @@ def list_chunks(document_id: int, user: CurrentUser, db: DbSession):
         .where(DocumentChunk.document_id == document_id)
         .order_by(DocumentChunk.chunk_index)
     ).all()
+
+
+@router.get("/documents/{document_id}/file")
+def get_document_file(document_id: int, user: CurrentUser, db: DbSession):
+    document = get_owned_document(db, user.id, document_id)
+    if document.file_data is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            "Original file not stored (uploaded before the viewer existed) — re-upload it.",
+        )
+    lower = document.original_filename.lower()
+    media = "application/pdf" if lower.endswith(".pdf") else "text/plain; charset=utf-8"
+    return Response(
+        content=document.file_data,
+        media_type=media,
+        headers={"Content-Disposition": f'inline; filename="{document.original_filename}"'},
+    )
+
+
+@router.post("/documents/{document_id}/chat", response_model=ChatResponse)
+def chat_with_document(
+    document_id: int, body: ChatRequest, user: CurrentUser, db: DbSession
+):
+    """Grounded Q&A over one document: retrieve its most relevant chunks for
+    the question, answer strictly from them, return the cited passages."""
+    document = get_owned_document(db, user.id, document_id)
+    if document.status != "ready":
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Document is not processed yet")
+
+    try:
+        ai.ensure_chunk_embeddings(db, document.topic_id)
+        query_vector = ai.embed_query(body.question)
+        chunks = list(
+            db.scalars(
+                select(DocumentChunk)
+                .where(
+                    DocumentChunk.document_id == document_id,
+                    DocumentChunk.embedding.is_not(None),
+                )
+                .order_by(DocumentChunk.embedding.cosine_distance(query_vector))
+                .limit(6)
+            ).all()
+        )
+        if not chunks:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, "No indexed text in this document")
+        reply = ai.answer_about_document(
+            body.question, [(t.role, t.content) for t in body.history], chunks
+        )
+    except ai.AIConfigError as exc:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(exc))
+
+    by_id = {c.id: c for c in chunks}
+    sources = [
+        ChatSource(page_number=by_id[cid].page_number, snippet=by_id[cid].content[:300])
+        for cid in dict.fromkeys(reply.source_chunk_ids)  # dedupe, keep order
+        if cid in by_id
+    ]
+    return ChatResponse(answer=reply.answer, sources=sources)
 
 
 @router.delete("/documents/{document_id}", status_code=status.HTTP_204_NO_CONTENT)

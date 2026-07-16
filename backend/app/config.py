@@ -19,6 +19,9 @@ class Settings(BaseSettings):
 
     # Gemini (Phase 4). Empty key = AI features cleanly disabled.
     gemini_api_key: str = ""
+    # Optional second key: used automatically when the primary hits
+    # rate limits / quota (429, 503, RESOURCE_EXHAUSTED).
+    gemini_api_key_fallback: str = ""
     # "-latest" alias: tracks the current flash model so retired model names
     # (like gemini-2.5-flash, which broke us once) can't strand the app.
     gemini_model: str = "gemini-flash-latest"

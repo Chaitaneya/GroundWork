@@ -262,6 +262,29 @@ class PendingBulkRequest(BaseModel):
     kind: Literal["notes", "flashcards", "quiz"]
 
 
+# ---------- document chat ----------
+
+
+class ChatTurn(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=2000)
+    history: list[ChatTurn] = []
+
+
+class ChatSource(BaseModel):
+    page_number: int
+    snippet: str
+
+
+class ChatResponse(BaseModel):
+    answer: str
+    sources: list[ChatSource]
+
+
 # ---------- analytics ----------
 
 

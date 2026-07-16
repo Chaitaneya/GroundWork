@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { XIcon } from "../components/icons";
 import { Link, useParams } from "react-router-dom";
 import SourcesView from "../components/SourcesView";
 import {
@@ -87,7 +88,7 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
     "w-full rounded-lg border border-white/15 px-3 py-2 text-sm focus:border-teal-300 focus:outline-none";
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
       <h4 className="font-semibold text-slate-100">Add a question</h4>
       <div className="flex gap-2">
         {(["mcq", "true_false", "short_answer"] as const).map((t) => (
@@ -228,7 +229,7 @@ export default function QuizPage() {
                 )}
                 <button
                   onClick={() => setMode("edit")}
-                  className="rounded-lg border border-white/15 bg-white/[0.06] backdrop-blur-xl px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
+                  className="rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
                 >
                   Edit
                 </button>
@@ -251,7 +252,7 @@ export default function QuizPage() {
               <div className="flex gap-2">
                 <button
                   onClick={startTaking}
-                  className="rounded-lg border border-white/15 bg-white/[0.06] backdrop-blur-xl px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
+                  className="rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
                 >
                   Retake
                 </button>
@@ -282,7 +283,7 @@ export default function QuizPage() {
         {quiz.questions.map((q, qi) => {
           const r = resultFor(q.id);
           return (
-            <li key={q.id} className={`rounded-xl border bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm ${
+            <li key={q.id} className={`rounded-xl border bg-white/[0.06] p-5 shadow-sm ${
               r ? (r.is_correct ? "border-emerald-500/40" : "border-rose-500/40") : "border-white/10"
             }`}>
               <div className="flex items-start justify-between gap-3">
@@ -298,9 +299,7 @@ export default function QuizPage() {
                     }}
                     className="text-sm text-slate-500 hover:text-rose-400"
                     title="Delete question"
-                  >
-                    ✕
-                  </button>
+                  ><XIcon /></button>
                 )}
               </div>
 

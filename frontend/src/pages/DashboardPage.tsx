@@ -4,7 +4,7 @@ import { fetchDashboard, type Dashboard, type TopicStat } from "../api";
 
 function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+    <div className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
       <p className="text-sm text-slate-400">{label}</p>
       <p className="mt-1 text-3xl font-bold text-slate-100">{value}</p>
       {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
@@ -77,7 +77,7 @@ export default function DashboardPage() {
         </Link>
       )}
 
-      <section className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+      <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
         <h3 className="font-semibold text-slate-100">Weakest topics</h3>
         <p className="mt-0.5 text-xs text-slate-500">
           Score 0–100 from recent quiz accuracy, forgotten reviews, and card ease — higher means weaker.
@@ -101,7 +101,7 @@ export default function DashboardPage() {
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+        <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
           <h3 className="font-semibold text-slate-100">Review activity — last 7 days</h3>
           <div className="mt-4 flex h-32 items-end gap-2">
             {data.reviews_by_day.map((d) => (
@@ -117,7 +117,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+        <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
           <h3 className="font-semibold text-slate-100">Recent quiz attempts</h3>
           {data.recent_attempts.length === 0 ? (
             <p className="mt-4 text-sm text-slate-400">No attempts yet — take a quiz from any topic.</p>

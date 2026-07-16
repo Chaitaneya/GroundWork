@@ -29,7 +29,7 @@ function StatusDot({ ok }: { ok: boolean | null }) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+    <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">{title}</h2>
       {children}
     </section>

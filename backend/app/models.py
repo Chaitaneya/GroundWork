@@ -5,6 +5,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    LargeBinary,
     SmallInteger,
     String,
     Text,
@@ -73,8 +74,8 @@ class Topic(Base):
 
 
 class Document(Base):
-    """An uploaded reading-material file. The original file is discarded
-    after processing — only the extracted text (as chunks) is kept."""
+    """An uploaded reading-material file: extracted text lives in chunks,
+    and the original bytes are kept for the in-app viewer."""
 
     __tablename__ = "documents"
 
@@ -87,6 +88,9 @@ class Document(Base):
     status: Mapped[str] = mapped_column(String(20), default="processing")
     page_count: Mapped[int] = mapped_column(default=0)
     error: Mapped[str | None] = mapped_column(String(500))
+    # Original upload, kept for the in-app document viewer. NULL on docs
+    # uploaded before this column existed.
+    file_data: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

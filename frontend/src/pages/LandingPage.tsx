@@ -37,7 +37,7 @@ function FloatingCards() {
 
   const card = DEMO_CARDS[i];
   const face =
-    "absolute inset-0 flex flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-6 backdrop-blur-2xl [backface-visibility:hidden]";
+    "absolute inset-0 flex flex-col justify-between rounded-2xl border border-white/15 bg-white/[0.08] p-6 [backface-visibility:hidden]";
 
   return (
     <div
@@ -52,8 +52,8 @@ function FloatingCards() {
         className="relative h-full w-full [transform-style:preserve-3d]"
       >
         {/* back cards of the stack */}
-        <div className="absolute inset-0 translate-x-6 translate-y-5 rotate-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur" />
-        <div className="absolute inset-0 -translate-x-5 translate-y-3 -rotate-6 rounded-2xl border border-white/10 bg-white/[0.07] backdrop-blur-lg" />
+        <div className="absolute inset-0 translate-x-6 translate-y-5 rotate-6 rounded-2xl border border-white/10 bg-white/5" />
+        <div className="absolute inset-0 -translate-x-5 translate-y-3 -rotate-6 rounded-2xl border border-white/10 bg-white/[0.07]" />
         {/* flipping top card */}
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
@@ -69,7 +69,7 @@ function FloatingCards() {
             <p className="text-xs font-semibold uppercase tracking-widest text-teal-300">Answer</p>
             <p className="text-lg text-slate-100">{card.a}</p>
             <p className="rounded-lg bg-teal-400/10 px-2 py-1 text-xs text-teal-200">
-              📄 grounded in your PDF — page {card.page}
+              Grounded in your PDF — page {card.page}
             </p>
           </div>
         </motion.div>
@@ -172,7 +172,7 @@ export default function LandingPage() {
             <motion.div
               key={n}
               {...rise}
-              className="rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-lg p-6 transition hover:border-teal-300/40 hover:bg-white/[0.06] backdrop-blur-xl"
+              className="rounded-2xl border border-white/10 bg-white/[0.06] p-6 transition hover:border-teal-300/40 hover:bg-white/[0.06]"
             >
               <p className="font-display text-sm font-bold text-teal-300">{n}</p>
               <h3 className="mt-2 text-lg font-semibold text-slate-100">{t}</h3>
@@ -197,7 +197,7 @@ export default function LandingPage() {
               page number included.
             </p>
           </motion.div>
-          <motion.div {...rise} className="rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6">
+          <motion.div {...rise} className="rounded-2xl border border-white/10 bg-white/[0.06] p-6">
             <p className="font-medium text-slate-100">Q: Which algorithm suffers from the convoy effect?</p>
             <p className="mt-1 text-sm text-slate-400">A: FCFS — short processes queue behind a long one.</p>
             <div className="mt-4 rounded-lg border-l-2 border-teal-300 bg-transparent p-3">
@@ -213,7 +213,7 @@ export default function LandingPage() {
 
       {/* SM-2 section */}
       <section className="mx-auto max-w-6xl px-5 py-20">
-        <motion.div {...rise} className="rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-lg p-8">
+        <motion.div {...rise} className="rounded-2xl border border-white/10 bg-white/[0.06] p-8">
           <h2 className="font-display text-3xl font-bold text-slate-100">Forget forgetting.</h2>
           <p className="mt-3 max-w-lg text-slate-400">
             Rate a card once and SM-2 schedules its future: easy cards drift away,

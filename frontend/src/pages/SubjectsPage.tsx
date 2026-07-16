@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { PencilIcon, XIcon } from "../components/icons";
 import { Link } from "react-router-dom";
 import {
   ApiError,
@@ -81,7 +82,7 @@ export default function SubjectsPage() {
           {(subjects ?? []).map((s) => (
             <li
               key={s.id}
-              className="group rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm transition hover:border-teal-300/40"
+              className="group rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm transition hover:border-teal-300/40"
             >
               {draft?.id === s.id ? (
                 <form onSubmit={onSaveEdit} className="space-y-2">
@@ -135,16 +136,12 @@ export default function SubjectsPage() {
                       }
                       className="text-sm text-slate-500 hover:text-teal-200"
                       title="Edit subject"
-                    >
-                      ✎
-                    </button>
+                    ><PencilIcon /></button>
                     <button
                       onClick={() => onDelete(s.id)}
                       className="text-sm text-slate-500 hover:text-rose-400"
                       title="Delete subject"
-                    >
-                      ✕
-                    </button>
+                    ><XIcon /></button>
                   </div>
                 </div>
               )}
@@ -155,7 +152,7 @@ export default function SubjectsPage() {
 
       <section className="max-w-md">
         <h2 className="mb-4 text-xl font-semibold text-slate-100">Add a subject</h2>
-        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-5 shadow-sm">
+        <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
           <input
             required
             maxLength={200}

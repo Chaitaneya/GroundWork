@@ -37,7 +37,6 @@ export default function ReviewPage() {
   if (!card) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <p className="text-4xl">🎉</p>
         <h2 className="mt-3 text-xl font-semibold text-slate-100">
           {done > 0 ? `Nice — ${done} card${done === 1 ? "" : "s"} reviewed.` : "Nothing due right now."}
         </h2>
@@ -57,7 +56,7 @@ export default function ReviewPage() {
         {queue.length} card{queue.length === 1 ? "" : "s"} left · {card.subject_name} / {card.topic_name}
       </p>
 
-      <div className="rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-8 shadow-sm">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-8 shadow-sm">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Front</p>
         <p className="mt-2 whitespace-pre-wrap text-lg text-slate-100">{card.front}</p>
 

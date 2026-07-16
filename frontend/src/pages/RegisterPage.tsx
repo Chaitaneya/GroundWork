@@ -40,7 +40,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <h1 className="mb-1 text-center text-2xl font-bold text-slate-100">Groundwork</h1>
         <p className="mb-6 text-center text-slate-400">Create your account</p>
-        <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6 shadow-sm">
+        <form onSubmit={onSubmit} className="space-y-4 rounded-xl border border-white/10 bg-white/[0.06] p-6 shadow-sm">
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-slate-300">Name</span>
             <input

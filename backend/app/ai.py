@@ -28,6 +28,7 @@ class AIConfigError(Exception):
 
 
 _client: genai.Client | None = None
+_fallback_client: genai.Client | None = None
 
 
 def get_client() -> genai.Client:
@@ -41,20 +42,43 @@ def get_client() -> genai.Client:
     return _client
 
 
+def _is_overloaded(exc: Exception) -> bool:
+    text = str(exc)
+    return any(m in text for m in ("429", "503", "RESOURCE_EXHAUSTED", "UNAVAILABLE", "quota"))
+
+
+def with_fallback(call):
+    """Run `call(client)`; if the primary key is rate-limited/overloaded and a
+    fallback key is configured, retry once on the fallback."""
+    global _fallback_client
+    try:
+        return call(get_client())
+    except AIConfigError:
+        raise
+    except Exception as exc:
+        if not settings.gemini_api_key_fallback or not _is_overloaded(exc):
+            raise
+        if _fallback_client is None:
+            _fallback_client = genai.Client(api_key=settings.gemini_api_key_fallback)
+        return call(_fallback_client)
+
+
 # ---------- embeddings ----------
 
 
 def _embed(texts: list[str], task_type: str) -> list[list[float]]:
-    client = get_client()
     vectors: list[list[float]] = []
     for i in range(0, len(texts), EMBED_BATCH):
-        response = client.models.embed_content(
-            model=settings.embedding_model,
-            contents=texts[i : i + EMBED_BATCH],
-            config=types.EmbedContentConfig(
-                output_dimensionality=settings.embedding_dim,
-                task_type=task_type,
-            ),
+        batch = texts[i : i + EMBED_BATCH]
+        response = with_fallback(
+            lambda client, batch=batch: client.models.embed_content(
+                model=settings.embedding_model,
+                contents=batch,
+                config=types.EmbedContentConfig(
+                    output_dimensionality=settings.embedding_dim,
+                    task_type=task_type,
+                ),
+            )
         )
         vectors.extend([e.values for e in response.embeddings])
     return vectors
@@ -218,19 +242,50 @@ STUDY MATERIAL:
 
 def generate_structured(prompt: str, schema: type) -> object:
     """Call Gemini with a required JSON schema and return parsed objects."""
-    client = get_client()
-    response = client.models.generate_content(
-        model=settings.gemini_model,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=schema,
-            temperature=0.4,
-        ),
+    response = with_fallback(
+        lambda client: client.models.generate_content(
+            model=settings.gemini_model,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=schema,
+                temperature=0.4,
+            ),
+        )
     )
     if response.parsed is None:
         raise ValueError("Model returned unparseable output")
     return response.parsed
+
+
+# ---------- document chat ----------
+
+
+class ChatReply(BaseModel):
+    answer: str
+    source_chunk_ids: list[int]
+
+
+def answer_about_document(
+    question: str,
+    history: list[tuple[str, str]],  # (role, content), oldest first
+    chunks: list[DocumentChunk],
+) -> ChatReply:
+    """Answer a question about one document, grounded in its chunks."""
+    context = build_context(chunks)
+    convo = "\n".join(f"{role.upper()}: {content}" for role, content in history[-8:])
+    prompt = f"""You are a study assistant answering questions about ONE document the
+student uploaded. Use ONLY the document excerpts below. If the answer is not in
+them, say so plainly — do not invent anything. Keep answers concise and clear.
+Cite the chunk ids you used in source_chunk_ids (integers from the [chunk N] labels).
+
+DOCUMENT EXCERPTS:
+{context}
+
+{"CONVERSATION SO FAR:" + chr(10) + convo if convo else ""}
+
+STUDENT'S QUESTION: {question}"""
+    return generate_structured(prompt, ChatReply)  # type: ignore[return-value]
 
 
 def valid_citations(source_chunk_ids: list[int], allowed_ids: set[int]) -> bool:

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { XIcon } from "../components/icons";
 import { Link, useParams } from "react-router-dom";
 import FlashcardsSection from "../components/FlashcardsSection";
 import NotesSection from "../components/NotesSection";
@@ -7,10 +8,8 @@ import {
   ApiError,
   deleteDocument,
   getTopic,
-  listDocumentChunks,
   listDocuments,
   uploadDocument,
-  type Chunk,
   type Document,
   type Topic,
 } from "../api";
@@ -38,8 +37,6 @@ export default function TopicPage() {
   const [tab, setTab] = useState<Tab>("Documents");
   const [topic, setTopic] = useState<Topic | null>(null);
   const [documents, setDocuments] = useState<Document[] | null>(null);
-  const [chunks, setChunks] = useState<Chunk[] | null>(null);
-  const [openDocId, setOpenDocId] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -80,24 +77,9 @@ export default function TopicPage() {
   }
 
   async function onDelete(docId: number) {
-    if (!confirm("Delete this document and all its chunks?")) return;
+    if (!confirm("Delete this document?")) return;
     await deleteDocument(docId);
-    if (openDocId === docId) {
-      setOpenDocId(null);
-      setChunks(null);
-    }
     await refreshDocuments();
-  }
-
-  async function toggleChunks(docId: number) {
-    if (openDocId === docId) {
-      setOpenDocId(null);
-      setChunks(null);
-      return;
-    }
-    setOpenDocId(docId);
-    setChunks(null);
-    setChunks(await listDocumentChunks(docId));
   }
 
   return (
@@ -119,7 +101,7 @@ export default function TopicPage() {
             onClick={() => setTab(t)}
             className={`shrink-0 rounded-t-lg px-4 py-2 text-sm font-medium ${
               tab === t
-                ? "border border-b-0 border-white/10 bg-white/[0.06] backdrop-blur-xl text-teal-200"
+                ? "border border-b-0 border-white/10 bg-white/[0.06] text-teal-200"
                 : "text-slate-400 hover:text-slate-100"
             }`}
           >
@@ -137,7 +119,7 @@ export default function TopicPage() {
 
         <form
           onSubmit={onUpload}
-          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-4 shadow-sm"
+          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-4 shadow-sm"
         >
           <input
             ref={fileInput}
@@ -166,7 +148,7 @@ export default function TopicPage() {
 
         <ul className="space-y-2">
           {(documents ?? []).map((d) => (
-            <li key={d.id} className="rounded-lg border border-white/10 bg-white/[0.06] backdrop-blur-xl shadow-sm">
+            <li key={d.id} className="rounded-lg border border-white/10 bg-white/[0.06] shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <div className="min-w-0">
                   <p className="flex items-center gap-2 font-medium text-slate-100">
@@ -174,7 +156,7 @@ export default function TopicPage() {
                   </p>
                   <p className="text-xs text-slate-400">
                     {d.original_filename}
-                    {d.status === "ready" && ` · ${d.page_count} pages · ${d.chunk_count} chunks`}
+                    {d.status === "ready" && ` · ${d.page_count} page${d.page_count === 1 ? "" : "s"}`}
                   </p>
                   {d.status === "failed" && d.error && (
                     <p className="mt-1 text-sm text-rose-400">{d.error}</p>
@@ -182,43 +164,20 @@ export default function TopicPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {d.status === "ready" && (
-                    <button
-                      onClick={() => toggleChunks(d.id)}
-                      className="text-sm font-medium text-teal-300 hover:underline"
+                    <Link
+                      to={`/documents/${d.id}`}
+                      className="rounded-lg border border-teal-300/30 bg-teal-400/10 px-3 py-1 text-sm font-medium text-teal-200 transition hover:bg-teal-400/20"
                     >
-                      {openDocId === d.id ? "Hide chunks" : "View chunks"}
-                    </button>
+                      Open
+                    </Link>
                   )}
                   <button
                     onClick={() => onDelete(d.id)}
                     className="text-sm text-slate-500 hover:text-rose-400"
                     title="Delete document"
-                  >
-                    ✕
-                  </button>
+                  ><XIcon /></button>
                 </div>
               </div>
-
-              {openDocId === d.id && (
-                <div className="border-t border-white/10 px-4 py-3">
-                  {chunks === null && <p className="text-sm text-slate-400">Loading chunks…</p>}
-                  {chunks !== null && (
-                    <ul className="space-y-3">
-                      {chunks.map((c) => (
-                        <li key={c.id} className="rounded-lg bg-transparent p-3">
-                          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            Chunk {c.chunk_index + 1} · page {c.page_number} · ~
-                            {Math.round(c.content.length / 4)} tokens
-                          </p>
-                          <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-300">
-                            {c.content}
-                          </p>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
             </li>
           ))}
         </ul>

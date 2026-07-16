@@ -1,16 +1,21 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Link, Navigate, NavLink, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./auth";
+import { BookIcon, HomeIcon, ZapIcon } from "./components/icons";
 import Wordmark from "./components/Wordmark";
-import DashboardPage from "./pages/DashboardPage";
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import QuizPage from "./pages/QuizPage";
-import RegisterPage from "./pages/RegisterPage";
-import ReviewPage from "./pages/ReviewPage";
-import StatusPage from "./pages/StatusPage";
-import SubjectPage from "./pages/SubjectPage";
-import SubjectsPage from "./pages/SubjectsPage";
-import TopicPage from "./pages/TopicPage";
+
+// Route-level code splitting: each page loads only when visited.
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const StatusPage = lazy(() => import("./pages/StatusPage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const SubjectsPage = lazy(() => import("./pages/SubjectsPage"));
+const SubjectPage = lazy(() => import("./pages/SubjectPage"));
+const TopicPage = lazy(() => import("./pages/TopicPage"));
+const QuizPage = lazy(() => import("./pages/QuizPage"));
+const ReviewPage = lazy(() => import("./pages/ReviewPage"));
+const DocumentPage = lazy(() => import("./pages/DocumentPage"));
 
 function NotFoundPage() {
   return (
@@ -18,7 +23,7 @@ function NotFoundPage() {
       <h1 className="font-display text-6xl font-bold text-slate-700">404</h1>
       <p className="mt-2 text-slate-400">This page doesn't exist.</p>
       <Link to="/" className="mt-4 font-medium text-teal-300 hover:underline">
-        ← Take me home
+        Take me home
       </Link>
     </main>
   );
@@ -32,9 +37,9 @@ function HomeGate() {
 }
 
 const NAV_ITEMS = [
-  { to: "/dashboard", label: "Home", icon: "◉" },
-  { to: "/subjects", label: "Subjects", icon: "▤" },
-  { to: "/review", label: "Review", icon: "⚡" },
+  { to: "/dashboard", label: "Home", Icon: HomeIcon },
+  { to: "/subjects", label: "Subjects", Icon: BookIcon },
+  { to: "/review", label: "Review", Icon: ZapIcon },
 ];
 
 function Layout() {
@@ -79,27 +84,21 @@ function Layout() {
         <Outlet />
       </main>
 
-      {/* mobile bottom tab bar — native-app feel */}
+      {/* mobile bottom tab bar */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-white/[0.07] backdrop-blur-xl sm:hidden">
         <div className="mx-auto flex max-w-md items-stretch justify-around px-2 py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
-          {NAV_ITEMS.map((n) => (
+          {NAV_ITEMS.map(({ to, label, Icon }) => (
             <NavLink
-              key={n.to}
-              to={n.to}
+              key={to}
+              to={to}
               className={({ isActive }) =>
-                `flex flex-1 flex-col items-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition ${
+                `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] font-medium transition ${
                   isActive ? "text-teal-300" : "text-slate-400"
                 }`
               }
             >
-              {({ isActive }) => (
-                <>
-                  <span className={`text-lg leading-none ${isActive ? "drop-shadow-[0_0_8px_rgba(45,212,191,0.6)]" : ""}`}>
-                    {n.icon}
-                  </span>
-                  {n.label}
-                </>
-              )}
+              <Icon className="h-5 w-5" />
+              {label}
             </NavLink>
           ))}
         </div>
@@ -112,27 +111,30 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<HomeGate />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/status" element={<StatusPage />} />
-          <Route
-            element={
-              <RequireAuth>
-                <Layout />
-              </RequireAuth>
-            }
-          >
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/subjects" element={<SubjectsPage />} />
-            <Route path="/subjects/:subjectId" element={<SubjectPage />} />
-            <Route path="/topics/:topicId" element={<TopicPage />} />
-            <Route path="/quizzes/:quizId" element={<QuizPage />} />
-            <Route path="/review" element={<ReviewPage />} />
-          </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+          <Routes>
+            <Route path="/" element={<HomeGate />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/status" element={<StatusPage />} />
+            <Route
+              element={
+                <RequireAuth>
+                  <Layout />
+                </RequireAuth>
+              }
+            >
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/subjects" element={<SubjectsPage />} />
+              <Route path="/subjects/:subjectId" element={<SubjectPage />} />
+              <Route path="/topics/:topicId" element={<TopicPage />} />
+              <Route path="/quizzes/:quizId" element={<QuizPage />} />
+              <Route path="/review" element={<ReviewPage />} />
+              <Route path="/documents/:documentId" element={<DocumentPage />} />
+            </Route>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

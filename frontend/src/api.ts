@@ -179,6 +179,32 @@ export function uploadDocument(topicId: number, file: File): Promise<Document> {
 
 export const listDocuments = (topicId: number) =>
   request<Document[]>(`/api/topics/${topicId}/documents`);
+export const getDocument = (id: number) => request<Document>(`/api/documents/${id}`);
+
+/** Fetch the original file (auth'd) and return an object URL for embedding. */
+export async function fetchDocumentFileUrl(id: number): Promise<string> {
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  const res = await fetch(`${API_BASE}/api/documents/${id}/file`, { headers });
+  if (!res.ok) throw new ApiError(res.status, "Original file is not available — re-upload it.");
+  return URL.createObjectURL(await res.blob());
+}
+
+export interface ChatSource {
+  page_number: number;
+  snippet: string;
+}
+
+export interface ChatReply {
+  answer: string;
+  sources: ChatSource[];
+}
+
+export const chatWithDocument = (
+  id: number,
+  question: string,
+  history: { role: "user" | "assistant"; content: string }[],
+) => postJson<ChatReply>(`/api/documents/${id}/chat`, { question, history });
 export const deleteDocument = (id: number) =>
   request<void>(`/api/documents/${id}`, { method: "DELETE" });
 export const listDocumentChunks = (documentId: number) =>
