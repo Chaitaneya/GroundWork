@@ -1,11 +1,37 @@
-@import "@fontsource-variable/inter";
-@import "@fontsource/space-grotesk/500.css";
-@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/figtree";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   GroundWork — "Night Desk"
+   A student's desk after dark: warm near-black wood, card-stock
+   index cards, one highlighter, page numbers in monospace.
+   desk    #161310   ground
+   lamp    #1F1B15   raised dark surface
+   card    #F4EFE3   card stock (light objects on the dark desk)
+   ink     #201D17   text on card stock
+   chalk   #EAE4D6   text on dark
+   dust    #97907F   muted text
+   marker  #FFD43B   highlighter yellow (always carries ink text)
+   rule    #D95B4E   the index-card red top rule
+------------------------------------------------------------------- */
+
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-desk: #161310;
+  --color-lamp: #1f1b15;
+  --color-card: #f4efe3;
+  --color-ink: #201d17;
+  --color-chalk: #eae4d6;
+  --color-dust: #97907f;
+  --color-marker: #ffd43b;
+  --color-rule: #d95b4e;
+  --color-edge: #332d22;
 }
 
 @layer base {
@@ -13,50 +39,55 @@
     color-scheme: dark;
   }
   body {
-    /* deep teal-black base; the aurora rides above it, fixed */
-    @apply overflow-x-hidden bg-[#04120f] font-sans text-slate-200 antialiased;
-  }
-  /* Aurora: soft drifting light blobs behind everything, so frosted glass
-     panels have color to refract. Fixed = doesn't scroll away. */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(38% 44% at 12% 8%, rgba(45, 212, 191, 0.22), transparent 60%),
-      radial-gradient(36% 42% at 88% 12%, rgba(34, 211, 238, 0.20), transparent 60%),
-      radial-gradient(46% 48% at 78% 92%, rgba(16, 185, 129, 0.16), transparent 62%),
-      radial-gradient(42% 44% at 18% 88%, rgba(56, 189, 248, 0.14), transparent 62%);
+    @apply overflow-x-hidden bg-desk font-sans text-chalk antialiased;
   }
   input,
   textarea,
   select {
-    @apply bg-white/5 text-slate-100 placeholder:text-slate-500;
+    @apply bg-lamp text-chalk placeholder:text-dust/70;
   }
   ::selection {
-    @apply bg-teal-400/30;
+    background: rgba(255, 212, 59, 0.45);
+    color: #201d17;
+  }
+  :focus-visible {
+    outline: 2px solid #ffd43b;
+    outline-offset: 2px;
   }
 }
 
 @layer components {
-  /* Frosted glass surface — the app's core panel. */
-  .glass {
-    @apply rounded-2xl border border-white/10 bg-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.35)];
+  /* highlighter swipe: dark text on a slightly skewed yellow stroke */
+  .mark {
+    background: linear-gradient(100deg, transparent 1%, #ffd43b 4%, #ffd43b 96%, transparent 99%);
+    color: #201d17;
+    padding: 0 0.15em;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
   }
-  .glass-hover {
-    @apply transition hover:border-teal-300/30 hover:bg-white/[0.09];
+  /* an index card: card stock with the classic red top rule */
+  .index-card {
+    @apply rounded-lg bg-card text-ink shadow-[0_10px_30px_rgba(0,0,0,0.45)];
+    background-image: linear-gradient(to bottom, transparent 2.4rem, #d95b4e 2.4rem, #d95b4e calc(2.4rem + 2px), transparent calc(2.4rem + 2px));
   }
-  /* Glass input field. */
-  .field {
-    @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100 transition placeholder:text-slate-500 focus:border-teal-300/50 focus:bg-white/[0.08] focus:outline-none;
+  /* faint ruled lines, for card faces */
+  .ruled {
+    background-image:
+      linear-gradient(to bottom, transparent 2.4rem, #d95b4e 2.4rem, #d95b4e calc(2.4rem + 2px), transparent calc(2.4rem + 2px)),
+      repeating-linear-gradient(to bottom, transparent, transparent calc(1.75rem - 1px), rgba(90, 120, 160, 0.18) calc(1.75rem - 1px), rgba(90, 120, 160, 0.18) 1.75rem);
   }
-  /* Primary action — teal→cyan gradient. */
-  .btn-primary {
-    @apply rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-[#04120f] shadow-[0_4px_20px_rgba(45,212,191,0.35)] transition hover:brightness-110;
+  /* dark panel on the desk */
+  .panel {
+    @apply rounded-xl border border-edge bg-lamp;
   }
-  .btn-ghost {
-    @apply rounded-xl border border-white/15 bg-white/5 px-4 py-2 font-medium text-slate-200 transition hover:bg-white/10;
+  .btn-marker {
+    @apply rounded-lg bg-marker px-4 py-2 font-semibold text-ink transition hover:bg-[#ffe070];
+  }
+  .btn-quiet {
+    @apply rounded-lg border border-edge px-4 py-2 font-medium text-chalk transition hover:border-dust/60 hover:text-card;
+  }
+  /* citation chip: mono, like a footnote reference */
+  .cite {
+    @apply rounded border border-edge bg-desk px-1.5 py-0.5 font-mono text-[11px] text-dust;
   }
 }

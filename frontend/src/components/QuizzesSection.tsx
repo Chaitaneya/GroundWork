@@ -51,9 +51,9 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         count={(quizzes ?? []).filter((q) => q.pending).length}
         onChanged={load}
       />
-      {quizzes === null && <p className="text-slate-400">Loading…</p>}
+      {quizzes === null && <p className="text-dust">Loading…</p>}
       {quizzes !== null && quizzes.length === 0 && (
-        <p className="rounded-lg border border-dashed border-white/15 p-6 text-center text-slate-400">
+        <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
           No quizzes yet — create one below, then add questions to it.
         </p>
       )}
@@ -61,20 +61,20 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
         {(quizzes ?? []).map((q) => (
           <li
             key={q.id}
-            className={`flex items-center justify-between rounded-lg border bg-white/[0.06] px-4 py-3 shadow-sm ${
-              q.pending ? "border-amber-500/40 bg-amber-500/5" : "border-white/10"
+            className={`flex items-center justify-between rounded-lg border bg-lamp px-4 py-3 shadow-sm ${
+              q.pending ? "border-marker/40 bg-marker/8" : "border-edge"
             }`}
           >
             <Link to={`/quizzes/${q.id}`} className="min-w-0 flex-1">
-              <p className="font-medium text-slate-100 hover:text-teal-200">
+              <p className="font-medium text-card hover:text-[#ffe070]">
                 {q.title}
                 {q.pending && (
-                  <span className="ml-2 rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-300">
+                  <span className="ml-2 rounded-full bg-marker/15 px-2 py-0.5 text-xs font-medium text-marker">
                     AI — review
                   </span>
                 )}
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-dust/80">
                 {q.question_count} {q.question_count === 1 ? "question" : "questions"}
               </p>
             </Link>
@@ -82,30 +82,30 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
               {q.pending && (
                 <button
                   onClick={() => onAccept(q.id)}
-                  className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-500"
+                  className="rounded-lg bg-[#4c7a4f] px-3 py-1 text-xs font-semibold text-ink hover:bg-[#5b8f5e]"
                 >
                   Accept
                 </button>
               )}
-              <button onClick={() => onDelete(q.id)} className="text-sm text-slate-500 hover:text-rose-400" title="Delete quiz"><XIcon /></button>
+              <button onClick={() => onDelete(q.id)} className="text-sm text-dust/80 hover:text-[#e88a7d]" title="Delete quiz"><XIcon /></button>
             </div>
           </li>
         ))}
       </ul>
 
-      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
+      <form onSubmit={onCreate} className="flex max-w-xl gap-3 rounded-xl border border-edge bg-lamp p-5 shadow-sm">
         <input
           required
           maxLength={255}
           placeholder="Quiz title, e.g. Normalization basics"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 rounded-lg border border-white/15 px-3 py-2 focus:border-teal-300 focus:outline-none"
+          className="flex-1 rounded-lg border border-[#3d362a] px-3 py-2 focus:border-marker/70 focus:outline-none"
         />
-        <button type="submit" className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110">
+        <button type="submit" className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]">
           Create
         </button>
-        {error && <p className="text-sm text-rose-400">{error}</p>}
+        {error && <p className="text-sm text-[#e88a7d]">{error}</p>}
       </form>
     </div>
   );

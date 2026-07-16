@@ -20,9 +20,9 @@ const DocumentPage = lazy(() => import("./pages/DocumentPage"));
 function NotFoundPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-transparent px-4">
-      <h1 className="font-display text-6xl font-bold text-slate-700">404</h1>
-      <p className="mt-2 text-slate-400">This page doesn't exist.</p>
-      <Link to="/" className="mt-4 font-medium text-teal-300 hover:underline">
+      <h1 className="font-display text-6xl font-bold text-[#57503f]">404</h1>
+      <p className="mt-2 text-dust">This page doesn't exist.</p>
+      <Link to="/" className="mt-4 font-medium text-marker hover:underline">
         Take me home
       </Link>
     </main>
@@ -46,7 +46,7 @@ function Layout() {
   const { user, signOut } = useAuth();
   return (
     <div className="min-h-screen bg-transparent">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-white/5 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-edge bg-lamp backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <Link to="/dashboard">
             <Wordmark />
@@ -58,21 +58,21 @@ function Layout() {
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `font-medium transition ${isActive ? "text-teal-300" : "text-slate-400 hover:text-slate-100"}`
+                  `font-medium transition ${isActive ? "text-marker" : "text-dust hover:text-card"}`
                 }
               >
                 {n.label}
               </NavLink>
             ))}
-            <span className="text-slate-500">{user?.display_name}</span>
-            <button onClick={signOut} className="text-slate-500 hover:text-slate-100">
+            <span className="text-dust/80">{user?.display_name}</span>
+            <button onClick={signOut} className="text-dust/80 hover:text-card">
               Sign out
             </button>
           </div>
           {/* mobile: just a sign-out affordance up top */}
           <button
             onClick={signOut}
-            className="text-sm font-medium text-slate-400 hover:text-slate-100 sm:hidden"
+            className="text-sm font-medium text-dust hover:text-card sm:hidden"
           >
             Sign out
           </button>
@@ -85,7 +85,7 @@ function Layout() {
       </main>
 
       {/* mobile bottom tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-white/[0.07] backdrop-blur-xl sm:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-edge bg-lamp backdrop-blur-xl sm:hidden">
         <div className="mx-auto flex max-w-md items-stretch justify-around px-2 py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
           {NAV_ITEMS.map(({ to, label, Icon }) => (
             <NavLink
@@ -93,7 +93,7 @@ function Layout() {
               to={to}
               className={({ isActive }) =>
                 `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] font-medium transition ${
-                  isActive ? "text-teal-300" : "text-slate-400"
+                  isActive ? "text-marker" : "text-dust"
                 }`
               }
             >
@@ -111,7 +111,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Suspense fallback={<div className="p-8 text-sm text-slate-500">Loading…</div>}>
+        <Suspense fallback={<div className="p-8 text-sm text-dust/80">Loading…</div>}>
           <Routes>
             <Route path="/" element={<HomeGate />} />
             <Route path="/login" element={<LoginPage />} />

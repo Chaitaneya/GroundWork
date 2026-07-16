@@ -29,8 +29,8 @@ function StatusDot({ ok }: { ok: boolean | null }) {
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">{title}</h2>
+    <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-dust">{title}</h2>
       {children}
     </section>
   );
@@ -44,50 +44,50 @@ export default function StatusPage() {
     <main className="min-h-screen bg-transparent px-4 py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         <header>
-          <h1 className="text-3xl font-bold text-slate-100">Groundwork</h1>
-          <p className="mt-1 text-slate-400">System status</p>
+          <h1 className="text-3xl font-bold text-card">Groundwork</h1>
+          <p className="mt-1 text-dust">System status</p>
         </header>
 
         <Card title="Backend API">
           {health.state === "loading" && (
-            <p className="flex items-center gap-2 text-slate-400"><StatusDot ok={null} /> Checking…</p>
+            <p className="flex items-center gap-2 text-dust"><StatusDot ok={null} /> Checking…</p>
           )}
           {health.state === "error" && (
             <div className="flex items-start gap-2">
               <StatusDot ok={false} />
-              <p className="text-slate-300">
+              <p className="text-chalk">
                 Not reachable ({health.message}). Is uvicorn running on port 8000?
               </p>
             </div>
           )}
           {health.state === "ok" && (
-            <p className="flex items-center gap-2 text-slate-300">
-              <StatusDot ok={true} /> FastAPI is up — <code className="rounded bg-white/10 px-1">{health.data.app}</code>
+            <p className="flex items-center gap-2 text-chalk">
+              <StatusDot ok={true} /> FastAPI is up — <code className="rounded bg-[#2a2519] px-1">{health.data.app}</code>
             </p>
           )}
         </Card>
 
         <Card title="Database (Neon Postgres)">
           {db.state === "loading" && (
-            <p className="flex items-center gap-2 text-slate-400"><StatusDot ok={null} /> Checking…</p>
+            <p className="flex items-center gap-2 text-dust"><StatusDot ok={null} /> Checking…</p>
           )}
           {db.state === "error" && (
             <div className="flex items-start gap-2">
               <StatusDot ok={false} />
-              <p className="text-slate-300">Couldn't reach the backend to check ({db.message}).</p>
+              <p className="text-chalk">Couldn't reach the backend to check ({db.message}).</p>
             </div>
           )}
           {db.state === "ok" && db.data.connected && (
-            <div className="space-y-1 text-slate-300">
+            <div className="space-y-1 text-chalk">
               <p className="flex items-center gap-2"><StatusDot ok={true} /> Connected</p>
-              <p className="text-sm text-slate-400">{db.data.postgres_version}</p>
-              <p className="text-sm text-slate-400">Server time: {db.data.server_time}</p>
+              <p className="text-sm text-dust">{db.data.postgres_version}</p>
+              <p className="text-sm text-dust">Server time: {db.data.server_time}</p>
             </div>
           )}
           {db.state === "ok" && !db.data.connected && (
             <div className="flex items-start gap-2">
               <StatusDot ok={false} />
-              <p className="text-slate-300">{db.data.detail}</p>
+              <p className="text-chalk">{db.data.detail}</p>
             </div>
           )}
         </Card>

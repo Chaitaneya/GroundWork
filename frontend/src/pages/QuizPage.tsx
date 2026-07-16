@@ -85,11 +85,11 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
   }
 
   const inputCls =
-    "w-full rounded-lg border border-white/15 px-3 py-2 text-sm focus:border-teal-300 focus:outline-none";
+    "w-full rounded-lg border border-[#3d362a] px-3 py-2 text-sm focus:border-marker/70 focus:outline-none";
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-      <h4 className="font-semibold text-slate-100">Add a question</h4>
+    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+      <h4 className="font-semibold text-card">Add a question</h4>
       <div className="flex gap-2">
         {(["mcq", "true_false", "short_answer"] as const).map((t) => (
           <button
@@ -97,7 +97,7 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
             type="button"
             onClick={() => setQtype(t)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-              qtype === t ? "bg-gradient-to-r from-teal-400 to-cyan-400 text-white" : "bg-white/10 text-slate-400 hover:bg-white/15"
+              qtype === t ? "bg-marker text-white" : "bg-[#2a2519] text-dust hover:bg-[#332d22]"
             }`}
           >
             {t === "mcq" ? "Multiple choice" : t === "true_false" ? "True / False" : "Short answer"}
@@ -125,12 +125,12 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
               />
             </div>
           ))}
-          <p className="text-xs text-slate-500">Select the radio next to the correct option.</p>
+          <p className="text-xs text-dust/80">Select the radio next to the correct option.</p>
         </div>
       )}
 
       {qtype === "true_false" && (
-        <div className="flex items-center gap-4 text-sm text-slate-300">
+        <div className="flex items-center gap-4 text-sm text-chalk">
           Correct answer:
           {(["True", "False"] as const).map((v) => (
             <label key={v} className="flex items-center gap-1">
@@ -145,8 +145,8 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
       )}
 
       <input placeholder="Explanation shown after answering (optional)" value={explanation} onChange={(e) => setExplanation(e.target.value)} className={inputCls} />
-      {error && <p className="text-sm text-rose-400">{error}</p>}
-      <button type="submit" className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110">
+      {error && <p className="text-sm text-[#e88a7d]">{error}</p>}
+      <button type="submit" className="rounded-lg bg-marker px-4 py-2 text-sm font-medium text-ink hover:bg-[#ffe070]">
         Add question
       </button>
     </form>
@@ -192,12 +192,12 @@ export default function QuizPage() {
   if (error && !quiz) {
     return (
       <div>
-        <p className="text-rose-400">{error}</p>
-        <Link to="/subjects" className="text-teal-300 hover:underline">← Back</Link>
+        <p className="text-[#e88a7d]">{error}</p>
+        <Link to="/subjects" className="text-marker hover:underline">← Back</Link>
       </div>
     );
   }
-  if (!quiz) return <p className="text-slate-400">Loading…</p>;
+  if (!quiz) return <p className="text-dust">Loading…</p>;
 
   const revealAnswers = mode === "edit"; // never in overview/take
   const resultFor = (qid: number) => result?.results.find((r) => r.question_id === qid);
@@ -205,13 +205,13 @@ export default function QuizPage() {
   return (
     <div className="space-y-8">
       <div>
-        <Link to={`/topics/${quiz.topic_id}`} className="text-sm text-teal-300 hover:underline">
+        <Link to={`/topics/${quiz.topic_id}`} className="text-sm text-marker hover:underline">
           ← Back to topic
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-slate-100">{quiz.title}</h2>
-            <p className="text-sm text-slate-400">
+            <h2 className="text-2xl font-bold text-card">{quiz.title}</h2>
+            <p className="text-sm text-dust">
               {quiz.questions.length} question{quiz.questions.length === 1 ? "" : "s"}
               {mode === "edit" && " · editing (correct answers visible)"}
             </p>
@@ -222,14 +222,14 @@ export default function QuizPage() {
                 {quiz.questions.length > 0 && (
                   <button
                     onClick={startTaking}
-                    className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110"
+                    className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
                   >
                     Take quiz
                   </button>
                 )}
                 <button
                   onClick={() => setMode("edit")}
-                  className="rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
+                  className="rounded-lg border border-[#3d362a] bg-lamp px-4 py-2 font-medium text-chalk hover:bg-[#2a2519]"
                 >
                   Edit
                 </button>
@@ -238,13 +238,13 @@ export default function QuizPage() {
             {mode === "edit" && (
               <button
                 onClick={() => setMode("overview")}
-                className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110"
+                className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
               >
                 Done editing
               </button>
             )}
             {mode === "take" && (
-              <button onClick={() => setMode("overview")} className="text-sm text-slate-400 hover:text-slate-100">
+              <button onClick={() => setMode("overview")} className="text-sm text-dust hover:text-card">
                 Cancel
               </button>
             )}
@@ -252,13 +252,13 @@ export default function QuizPage() {
               <div className="flex gap-2">
                 <button
                   onClick={startTaking}
-                  className="rounded-lg border border-white/15 bg-white/[0.06] px-4 py-2 font-medium text-slate-300 hover:bg-white/10"
+                  className="rounded-lg border border-[#3d362a] bg-lamp px-4 py-2 font-medium text-chalk hover:bg-[#2a2519]"
                 >
                   Retake
                 </button>
                 <button
                   onClick={() => setMode("overview")}
-                  className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110"
+                  className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
                 >
                   Done
                 </button>
@@ -267,14 +267,14 @@ export default function QuizPage() {
           </div>
         </div>
         {mode === "result" && result && (
-          <p className="mt-2 text-lg font-semibold text-slate-100">
-            Score: <span className={result.score_pct >= 60 ? "text-emerald-400" : "text-rose-400"}>{result.score_pct}%</span>
+          <p className="mt-2 text-lg font-semibold text-card">
+            Score: <span className={result.score_pct >= 60 ? "text-[#8fcf92]" : "text-[#e88a7d]"}>{result.score_pct}%</span>
           </p>
         )}
       </div>
 
       {quiz.questions.length === 0 && mode !== "edit" && (
-        <p className="rounded-lg border border-dashed border-white/15 p-6 text-center text-slate-400">
+        <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
           This quiz has no questions yet — hit Edit to add some.
         </p>
       )}
@@ -283,11 +283,11 @@ export default function QuizPage() {
         {quiz.questions.map((q, qi) => {
           const r = resultFor(q.id);
           return (
-            <li key={q.id} className={`rounded-xl border bg-white/[0.06] p-5 shadow-sm ${
-              r ? (r.is_correct ? "border-emerald-500/40" : "border-rose-500/40") : "border-white/10"
+            <li key={q.id} className={`rounded-xl border bg-lamp p-5 shadow-sm ${
+              r ? (r.is_correct ? "border-[#4c7a4f]/50" : "border-rule/50") : "border-edge"
             }`}>
               <div className="flex items-start justify-between gap-3">
-                <p className="font-medium text-slate-100">
+                <p className="font-medium text-card">
                   {qi + 1}. {q.prompt}
                 </p>
                 {mode === "edit" && (
@@ -297,7 +297,7 @@ export default function QuizPage() {
                       await deleteQuestion(q.id);
                       reload();
                     }}
-                    className="text-sm text-slate-500 hover:text-rose-400"
+                    className="text-sm text-dust/80 hover:text-[#e88a7d]"
                     title="Delete question"
                   ><XIcon /></button>
                 )}
@@ -310,9 +310,9 @@ export default function QuizPage() {
                     <label
                       key={o.id}
                       className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${
-                        mode === "take" ? "cursor-pointer hover:bg-white/10" : ""
-                      } ${revealAnswers && o.is_correct ? "bg-emerald-500/10 font-medium text-emerald-300" : "text-slate-300"} ${
-                        r && answers[q.id] === String(o.id) ? (r.is_correct ? "bg-emerald-500/10" : "bg-rose-500/10") : ""
+                        mode === "take" ? "cursor-pointer hover:bg-[#2a2519]" : ""
+                      } ${revealAnswers && o.is_correct ? "bg-[#4c7a4f]/20 font-medium text-[#9fd8a2]" : "text-chalk"} ${
+                        r && answers[q.id] === String(o.id) ? (r.is_correct ? "bg-[#4c7a4f]/20" : "bg-rule/15") : ""
                       }`}
                     >
                       {mode === "take" ? (
@@ -334,12 +334,12 @@ export default function QuizPage() {
                   placeholder="Your answer"
                   value={answers[q.id] ?? ""}
                   onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                  className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2 text-sm focus:border-teal-300 focus:outline-none"
+                  className="mt-3 w-full rounded-lg border border-[#3d362a] px-3 py-2 text-sm focus:border-marker/70 focus:outline-none"
                 />
               ) : (
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-dust">
                   {revealAnswers ? (
-                    <>Answer: <span className="font-medium text-slate-300">{q.answer_text}</span></>
+                    <>Answer: <span className="font-medium text-chalk">{q.answer_text}</span></>
                   ) : mode === "result" ? (
                     `Your answer: ${answers[q.id] || "—"}`
                   ) : (
@@ -357,10 +357,10 @@ export default function QuizPage() {
               {/* result feedback */}
               {r && (
                 <div className="mt-3 rounded-lg bg-transparent px-3 py-2 text-sm">
-                  <p className={r.is_correct ? "font-medium text-emerald-400" : "font-medium text-rose-400"}>
+                  <p className={r.is_correct ? "font-medium text-[#8fcf92]" : "font-medium text-[#e88a7d]"}>
                     {r.is_correct ? "Correct" : `Incorrect — correct answer: ${r.correct_answer}`}
                   </p>
-                  {r.explanation && <p className="mt-1 text-slate-400">{r.explanation}</p>}
+                  {r.explanation && <p className="mt-1 text-dust">{r.explanation}</p>}
                 </div>
               )}
             </li>
@@ -369,7 +369,7 @@ export default function QuizPage() {
       </ol>
 
       {mode === "take" && (
-        <button onClick={onSubmitAttempt} className="w-full max-w-md rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 py-3 font-medium text-white hover:brightness-110">
+        <button onClick={onSubmitAttempt} className="w-full max-w-md rounded-xl bg-marker py-3 font-medium text-ink hover:bg-[#ffe070]">
           Submit answers
         </button>
       )}
@@ -378,8 +378,8 @@ export default function QuizPage() {
 
       {mode === "overview" && attempts.length > 0 && (
         <section>
-          <h4 className="mb-2 font-semibold text-slate-100">Past attempts</h4>
-          <ul className="space-y-1 text-sm text-slate-400">
+          <h4 className="mb-2 font-semibold text-card">Past attempts</h4>
+          <ul className="space-y-1 text-sm text-dust">
             {attempts.map((a) => (
               <li key={a.id}>
                 {new Date(a.started_at).toLocaleString()} — <span className="font-medium">{a.score_pct}%</span>

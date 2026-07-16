@@ -4,10 +4,10 @@ import { fetchDashboard, type Dashboard, type TopicStat } from "../api";
 
 function StatTile({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-      <p className="text-sm text-slate-400">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-slate-100">{value}</p>
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+    <div className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+      <p className="text-sm text-dust">{label}</p>
+      <p className="mt-1 text-3xl font-bold text-card">{value}</p>
+      {hint && <p className="mt-1 text-xs text-dust/80">{hint}</p>}
     </div>
   );
 }
@@ -21,17 +21,17 @@ function WeaknessRow({ t }: { t: TopicStat }) {
   return (
     <li className="py-3">
       <div className="mb-1 flex items-baseline justify-between gap-3">
-        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-slate-100 hover:text-teal-200">
+        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-card hover:text-[#ffe070]">
           {t.topic_name}
-          <span className="ml-2 text-xs font-normal text-slate-500">{t.subject_name}</span>
+          <span className="ml-2 text-xs font-normal text-dust/80">{t.subject_name}</span>
         </Link>
-        <span className="shrink-0 text-sm font-semibold text-slate-300">{t.weakness}</span>
+        <span className="shrink-0 text-sm font-semibold text-chalk">{t.weakness}</span>
       </div>
       {/* single-hue magnitude bar: length encodes weakness, color stays constant */}
-      <div className="h-2.5 w-full overflow-hidden rounded bg-white/10" title={`Weakness ${t.weakness} / 100`}>
-        <div className="h-full rounded bg-gradient-to-r from-teal-400 to-cyan-400" style={{ width: `${t.weakness}%` }} />
+      <div className="h-2.5 w-full overflow-hidden rounded bg-[#2a2519]" title={`Weakness ${t.weakness} / 100`}>
+        <div className="h-full rounded bg-marker" style={{ width: `${t.weakness}%` }} />
       </div>
-      <p className="mt-1 text-xs text-slate-500">{parts.join(" · ")}</p>
+      <p className="mt-1 text-xs text-dust/80">{parts.join(" · ")}</p>
     </li>
   );
 }
@@ -44,8 +44,8 @@ export default function DashboardPage() {
     fetchDashboard().then(setData).catch((e: Error) => setError(e.message));
   }, []);
 
-  if (error) return <p className="text-rose-400">{error}</p>;
-  if (!data) return <p className="text-slate-400">Loading your dashboard…</p>;
+  if (error) return <p className="text-[#e88a7d]">{error}</p>;
+  if (!data) return <p className="text-dust">Loading your dashboard…</p>;
 
   const ranked = data.topics
     .filter((t) => t.weakness !== null)
@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-xl font-semibold text-slate-100">Dashboard</h2>
+      <h2 className="text-xl font-semibold text-card">Dashboard</h2>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatTile
@@ -71,66 +71,66 @@ export default function DashboardPage() {
       {data.due_now > 0 && (
         <Link
           to="/review"
-          className="inline-block rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 font-medium text-white hover:brightness-110"
+          className="inline-block rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
         >
           Start reviewing →
         </Link>
       )}
 
-      <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-        <h3 className="font-semibold text-slate-100">Weakest topics</h3>
-        <p className="mt-0.5 text-xs text-slate-500">
+      <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+        <h3 className="font-semibold text-card">Weakest topics</h3>
+        <p className="mt-0.5 text-xs text-dust/80">
           Score 0–100 from recent quiz accuracy, forgotten reviews, and card ease — higher means weaker.
         </p>
         {ranked.length === 0 ? (
-          <p className="mt-4 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-dust">
             No signal yet — review some flashcards or take a quiz, and weakness scores appear here.
           </p>
         ) : (
-          <ul className="mt-2 divide-y divide-white/10">
+          <ul className="mt-2 divide-y divide-edge">
             {ranked.map((t) => (
               <WeaknessRow key={t.topic_id} t={t} />
             ))}
           </ul>
         )}
         {unranked.length > 0 && (
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="mt-3 text-xs text-dust/80">
             Not enough data yet: {unranked.map((t) => t.topic_name).join(", ")}
           </p>
         )}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-100">Review activity — last 7 days</h3>
+        <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+          <h3 className="font-semibold text-card">Review activity — last 7 days</h3>
           <div className="mt-4 flex h-32 items-end gap-2">
             {data.reviews_by_day.map((d) => (
               <div key={d.day} className="flex flex-1 flex-col items-center gap-1" title={`${d.day}: ${d.count} reviews`}>
-                <span className="text-xs text-slate-400">{d.count > 0 ? d.count : ""}</span>
+                <span className="text-xs text-dust">{d.count > 0 ? d.count : ""}</span>
                 <div
-                  className="w-full max-w-8 rounded-t bg-gradient-to-r from-teal-400 to-cyan-400"
+                  className="w-full max-w-8 rounded-t bg-marker"
                   style={{ height: `${Math.max(d.count > 0 ? 8 : 2, (d.count / maxDay) * 96)}px` }}
                 />
-                <span className="text-[10px] text-slate-500">{d.day.slice(5)}</span>
+                <span className="text-[10px] text-dust/80">{d.day.slice(5)}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="rounded-xl border border-white/10 bg-white/[0.06] p-5 shadow-sm">
-          <h3 className="font-semibold text-slate-100">Recent quiz attempts</h3>
+        <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
+          <h3 className="font-semibold text-card">Recent quiz attempts</h3>
           {data.recent_attempts.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-400">No attempts yet — take a quiz from any topic.</p>
+            <p className="mt-4 text-sm text-dust">No attempts yet — take a quiz from any topic.</p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">
               {data.recent_attempts.map((a) => (
                 <li key={a.id} className="flex items-center justify-between gap-3">
-                  <span className="min-w-0 truncate text-slate-300">
+                  <span className="min-w-0 truncate text-chalk">
                     {a.quiz_title}
-                    <span className="ml-2 text-xs text-slate-500">{a.topic_name}</span>
+                    <span className="ml-2 text-xs text-dust/80">{a.topic_name}</span>
                   </span>
                   <span className={`shrink-0 font-semibold ${
-                    (a.score_pct ?? 0) >= 60 ? "text-emerald-400" : "text-rose-400"
+                    (a.score_pct ?? 0) >= 60 ? "text-[#8fcf92]" : "text-[#e88a7d]"
                   }`}>
                     {a.score_pct}%
                   </span>

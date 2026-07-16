@@ -91,12 +91,12 @@ export default function GenerateBar({
   const stage = stages[Math.min(Math.floor(elapsed / STAGE_SECONDS), stages.length - 1)];
 
   return (
-    <div className="rounded-xl border border-teal-300/20 bg-teal-400/10 p-4">
+    <div className="rounded-xl border border-marker/25 bg-marker/12 p-4">
       <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={onGenerate}
           disabled={active}
-          className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-2 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50"
+          className="rounded-lg bg-marker px-4 py-2 text-sm font-medium text-ink hover:bg-[#ffe070] disabled:opacity-50"
         >
           {active ? "Generating…" : `Generate ${KIND_LABEL[kind]} from documents`}
         </button>
@@ -104,7 +104,7 @@ export default function GenerateBar({
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as QuizDifficulty)}
-            className="rounded-lg border border-white/15 bg-white/[0.06] px-2 py-1.5 text-sm text-slate-300 focus:border-teal-300 focus:outline-none"
+            className="rounded-lg border border-[#3d362a] bg-lamp px-2 py-1.5 text-sm text-chalk focus:border-marker/70 focus:outline-none"
             title="Quiz difficulty"
           >
             <option value="intro">Intro</option>
@@ -113,7 +113,7 @@ export default function GenerateBar({
           </select>
         )}
         {!active && (
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-dust">
             Grounded in this topic's uploaded material — every item cites its source passages.
           </p>
         )}
@@ -121,24 +121,24 @@ export default function GenerateBar({
 
       {active && (
         <div className="mt-3">
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-gradient-to-r from-teal-400 to-cyan-400" />
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#2a2519]">
+            <div className="h-full w-1/3 animate-[slide_1.2s_ease-in-out_infinite] rounded-full bg-marker" />
           </div>
-          <p className="mt-2 text-sm text-teal-200">{stage}</p>
+          <p className="mt-2 text-sm text-marker">{stage}</p>
           <style>{`@keyframes slide { 0% { margin-left: -33% } 100% { margin-left: 100% } }`}</style>
         </div>
       )}
 
       {job?.status === "done" && (
-        <p className="mt-2 text-sm text-emerald-400">
+        <p className="mt-2 text-sm text-[#8fcf92]">
           Created {job.created_count} item{job.created_count === 1 ? "" : "s"} for your review
           {job.rejected_count > 0 &&
             ` (${job.rejected_count} rejected for failing the source-citation check)`}
           .
         </p>
       )}
-      {job?.status === "failed" && <p className="mt-2 text-sm text-rose-400">{job.error}</p>}
-      {error && <p className="mt-2 text-sm text-rose-400">{error}</p>}
+      {job?.status === "failed" && <p className="mt-2 text-sm text-[#e88a7d]">{job.error}</p>}
+      {error && <p className="mt-2 text-sm text-[#e88a7d]">{error}</p>}
     </div>
   );
 }

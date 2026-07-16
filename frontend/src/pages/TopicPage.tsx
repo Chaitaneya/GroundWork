@@ -16,9 +16,9 @@ import {
 
 function StatusBadge({ status }: { status: Document["status"] }) {
   const styles = {
-    processing: "bg-amber-500/15 text-amber-300",
-    ready: "bg-emerald-500/15 text-emerald-300",
-    failed: "bg-rose-500/15 text-rose-300",
+    processing: "bg-marker/15 text-marker",
+    ready: "bg-[#4c7a4f]/25 text-[#9fd8a2]",
+    failed: "bg-rule/20 text-[#eda297]",
   }[status];
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${styles}`}>
@@ -86,23 +86,23 @@ export default function TopicPage() {
     <div className="space-y-8">
       <div>
         {topic && (
-          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-teal-300 hover:underline">
+          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-marker hover:underline">
             ← Back to subject
           </Link>
         )}
-        <h2 className="mt-2 text-2xl font-bold text-slate-100">{topic?.name ?? "…"}</h2>
-        {topic?.description && <p className="mt-1 text-slate-400">{topic.description}</p>}
+        <h2 className="mt-2 text-2xl font-bold text-card">{topic?.name ?? "…"}</h2>
+        {topic?.description && <p className="mt-1 text-dust">{topic.description}</p>}
       </div>
 
-      <nav className="flex gap-1 overflow-x-auto border-b border-white/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <nav className="flex gap-1 overflow-x-auto border-b border-edge [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`shrink-0 rounded-t-lg px-4 py-2 text-sm font-medium ${
               tab === t
-                ? "border border-b-0 border-white/10 bg-white/[0.06] text-teal-200"
-                : "text-slate-400 hover:text-slate-100"
+                ? "border border-b-0 border-edge bg-lamp text-marker"
+                : "text-dust hover:text-card"
             }`}
           >
             {t}
@@ -115,65 +115,65 @@ export default function TopicPage() {
       {tab === "Quizzes" && <QuizzesSection topicId={id} />}
 
       <section className={tab === "Documents" ? "" : "hidden"}>
-        <h3 className="mb-4 text-lg font-semibold text-slate-100">Reading material</h3>
+        <h3 className="mb-4 text-lg font-semibold text-card">Reading material</h3>
 
         <form
           onSubmit={onUpload}
-          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-4 shadow-sm"
+          className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-edge bg-lamp p-4 shadow-sm"
         >
           <input
             ref={fileInput}
             type="file"
             accept=".pdf,.txt,.md"
             required
-            className="text-sm text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-teal-200 hover:file:bg-white/15"
+            className="text-sm text-dust file:mr-3 file:rounded-lg file:border-0 file:bg-[#2a2519] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-marker hover:file:bg-[#332d22]"
           />
           <button
             type="submit"
             disabled={uploading}
-            className="rounded-lg bg-gradient-to-r from-teal-400 to-cyan-400 px-4 py-1.5 text-sm font-medium text-white hover:brightness-110 disabled:opacity-50"
+            className="rounded-lg bg-marker px-4 py-1.5 text-sm font-medium text-ink hover:bg-[#ffe070] disabled:opacity-50"
           >
             {uploading ? "Uploading…" : "Upload"}
           </button>
-          <span className="text-xs text-slate-500">PDF, TXT, or MD · max 25 MB</span>
+          <span className="text-xs text-dust/80">PDF, TXT, or MD · max 25 MB</span>
         </form>
-        {error && <p className="mb-3 text-sm text-rose-400">{error}</p>}
+        {error && <p className="mb-3 text-sm text-[#e88a7d]">{error}</p>}
 
-        {documents === null && <p className="text-slate-400">Loading…</p>}
+        {documents === null && <p className="text-dust">Loading…</p>}
         {documents !== null && documents.length === 0 && (
-          <p className="rounded-lg border border-dashed border-white/15 p-6 text-center text-slate-400">
+          <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
             No documents yet — upload the reading material for this topic.
           </p>
         )}
 
         <ul className="space-y-2">
           {(documents ?? []).map((d) => (
-            <li key={d.id} className="rounded-lg border border-white/10 bg-white/[0.06] shadow-sm">
+            <li key={d.id} className="rounded-lg border border-edge bg-lamp shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 font-medium text-slate-100">
+                  <p className="flex items-center gap-2 font-medium text-card">
                     {d.title} <StatusBadge status={d.status} />
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-dust">
                     {d.original_filename}
                     {d.status === "ready" && ` · ${d.page_count} page${d.page_count === 1 ? "" : "s"}`}
                   </p>
                   {d.status === "failed" && d.error && (
-                    <p className="mt-1 text-sm text-rose-400">{d.error}</p>
+                    <p className="mt-1 text-sm text-[#e88a7d]">{d.error}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   {d.status === "ready" && (
                     <Link
                       to={`/documents/${d.id}`}
-                      className="rounded-lg border border-teal-300/30 bg-teal-400/10 px-3 py-1 text-sm font-medium text-teal-200 transition hover:bg-teal-400/20"
+                      className="rounded-lg border border-marker/40 bg-marker/12 px-3 py-1 text-sm font-medium text-marker transition hover:bg-marker/25"
                     >
                       Open
                     </Link>
                   )}
                   <button
                     onClick={() => onDelete(d.id)}
-                    className="text-sm text-slate-500 hover:text-rose-400"
+                    className="text-sm text-dust/80 hover:text-[#e88a7d]"
                     title="Delete document"
                   ><XIcon /></button>
                 </div>

@@ -18,12 +18,12 @@ export default function PasswordInput({ value, onChange, minLength, autoComplete
         autoComplete={autoComplete}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-white/15 px-3 py-2 pr-16 focus:border-teal-300 focus:outline-none"
+        className="w-full rounded-lg border border-[#3d362a] px-3 py-2 pr-16 focus:border-marker/70 focus:outline-none"
       />
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
-        className="absolute inset-y-0 right-3 text-sm font-medium text-slate-400 hover:text-white"
+        className="absolute inset-y-0 right-3 text-sm font-medium text-dust hover:text-card"
         aria-label={visible ? "Hide password" : "Show password"}
       >
         {visible ? "Hide" : "Show"}

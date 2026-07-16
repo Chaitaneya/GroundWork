@@ -16,25 +16,25 @@ export default function SourcesView({ fetch }: { fetch: () => Promise<Chunk[]> }
     <div>
       <button
         onClick={toggle}
-        className="text-xs font-medium text-teal-300 hover:underline"
+        className="text-xs font-medium text-marker hover:underline"
       >
         {open ? "Hide sources" : "Show sources"}
       </button>
       {open && (
         <div className="mt-2 space-y-2">
-          {chunks === null && <p className="text-xs text-slate-400">Loading…</p>}
+          {chunks === null && <p className="text-xs text-dust">Loading…</p>}
           {chunks !== null && chunks.length === 0 && (
-            <p className="text-xs text-slate-400">No source records.</p>
+            <p className="text-xs text-dust">No source records.</p>
           )}
           {(chunks ?? []).map((c) => (
             <blockquote
               key={c.id}
-              className="rounded-lg border-l-2 border-teal-300/40 bg-transparent px-3 py-2"
+              className="rounded-lg border-l-2 border-marker/40 bg-transparent px-3 py-2"
             >
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-dust/80">
                 Source · page {c.page_number}
               </p>
-              <p className="whitespace-pre-wrap text-xs leading-relaxed text-slate-400">
+              <p className="whitespace-pre-wrap text-xs leading-relaxed text-dust">
                 {c.content}
               </p>
             </blockquote>

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchReviewQueue, reviewFlashcard, type QueueCard } from "../api";
 
-const RATINGS: { value: 1 | 2 | 3 | 4; label: string; classes: string }[] = [
-  { value: 1, label: "Again", classes: "bg-rose-600 hover:bg-rose-500" },
-  { value: 2, label: "Hard", classes: "bg-amber-500 hover:bg-amber-600" },
-  { value: 3, label: "Good", classes: "bg-emerald-600 hover:bg-emerald-500" },
-  { value: 4, label: "Easy", classes: "bg-sky-600 hover:bg-sky-700" },
+const RATINGS: { value: 1 | 2 | 3 | 4; label: string; key: string; classes: string }[] = [
+  { value: 1, label: "Again", key: "1", classes: "bg-[#b14a3e] text-card hover:bg-[#c25546]" },
+  { value: 2, label: "Hard", key: "2", classes: "bg-[#c9973a] text-ink hover:bg-[#d8a94e]" },
+  { value: 3, label: "Good", key: "3", classes: "bg-[#4c7a4f] text-card hover:bg-[#5b8f5e]" },
+  { value: 4, label: "Easy", key: "4", classes: "bg-[#4a6d8c] text-card hover:bg-[#557da0]" },
 ];
 
 export default function ReviewPage() {
@@ -20,31 +20,48 @@ export default function ReviewPage() {
 
   const card = queue?.[0] ?? null;
 
-  async function rate(rating: 1 | 2 | 3 | 4) {
-    if (!card) return;
-    await reviewFlashcard(card.id, rating);
-    // "Again" makes the card due in ~10 min, so it naturally reappears if
-    // you refetch later — within this session we just move to the next one.
-    setQueue((prev) => (prev ?? []).slice(1));
-    setRevealed(false);
-    setDone((n) => n + 1);
-  }
+  const rate = useCallback(
+    async (rating: 1 | 2 | 3 | 4) => {
+      if (!card) return;
+      await reviewFlashcard(card.id, rating);
+      setQueue((prev) => (prev ?? []).slice(1));
+      setRevealed(false);
+      setDone((n) => n + 1);
+    },
+    [card],
+  );
+
+  // keyboard: space flips, 1-4 rates
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        setRevealed(true);
+      } else if (revealed && ["1", "2", "3", "4"].includes(e.key)) {
+        rate(Number(e.key) as 1 | 2 | 3 | 4);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [revealed, rate]);
 
   if (queue === null) {
-    return <p className="text-slate-400">Loading your review queue…</p>;
+    return <p className="text-dust">Loading your review queue…</p>;
   }
 
   if (!card) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <h2 className="mt-3 text-xl font-semibold text-slate-100">
-          {done > 0 ? `Nice — ${done} card${done === 1 ? "" : "s"} reviewed.` : "Nothing due right now."}
+        <h2 className="font-display text-2xl font-semibold text-card">
+          {done > 0 ? `${done} card${done === 1 ? "" : "s"} reviewed.` : "Nothing due right now."}
         </h2>
-        <p className="mt-2 text-slate-400">
-          Cards come back when SM-2 schedules them. Add more from any topic's Flashcards tab.
+        <p className="mt-2 text-dust">
+          Cards come back when the schedule says so. Add more from any topic's
+          Flashcards tab.
         </p>
-        <Link to="/dashboard" className="mt-4 inline-block font-medium text-teal-300 hover:underline">
-          ← Back to subjects
+        <Link to="/dashboard" className="mt-4 inline-block font-medium text-marker hover:underline">
+          Back to dashboard
         </Link>
       </div>
     );
@@ -52,29 +69,31 @@ export default function ReviewPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <p className="mb-3 text-sm text-slate-400">
-        {queue.length} card{queue.length === 1 ? "" : "s"} left · {card.subject_name} / {card.topic_name}
-      </p>
+      <div className="mb-3 flex items-baseline justify-between">
+        <p className="font-mono text-xs text-dust">
+          {queue.length} left · {card.subject_name} / {card.topic_name}
+        </p>
+        {done > 0 && <p className="font-mono text-xs text-dust/70">{done} done</p>}
+      </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-8 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Front</p>
-        <p className="mt-2 whitespace-pre-wrap text-lg text-slate-100">{card.front}</p>
+      {/* the index card */}
+      <div className="ruled min-h-64 rounded-lg bg-card p-7 pt-4 text-ink shadow-[0_18px_50px_rgba(0,0,0,0.5)]">
+        <p className="font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">Q</p>
+        <p className="mt-3 font-display text-xl leading-relaxed font-semibold whitespace-pre-wrap">
+          {card.front}
+        </p>
 
         {revealed && (
           <>
-            <hr className="my-6 border-white/10" />
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Back</p>
-            <p className="mt-2 whitespace-pre-wrap text-lg text-slate-100">{card.back}</p>
+            <p className="mt-6 font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">A</p>
+            <p className="mt-2 text-lg leading-relaxed whitespace-pre-wrap">{card.back}</p>
           </>
         )}
       </div>
 
       <div className="mt-6">
         {!revealed ? (
-          <button
-            onClick={() => setRevealed(true)}
-            className="w-full rounded-xl bg-gradient-to-r from-teal-400 to-cyan-400 py-3 font-medium text-white hover:brightness-110"
-          >
+          <button onClick={() => setRevealed(true)} className="btn-marker w-full py-3">
             Show answer
           </button>
         ) : (
@@ -83,16 +102,17 @@ export default function ReviewPage() {
               <button
                 key={r.value}
                 onClick={() => rate(r.value)}
-                className={`rounded-xl py-3 font-medium text-white ${r.classes}`}
+                className={`rounded-lg py-3 font-semibold transition ${r.classes}`}
               >
                 {r.label}
+                <span className="ml-1.5 hidden font-mono text-xs opacity-60 sm:inline">{r.key}</span>
               </button>
             ))}
           </div>
         )}
       </div>
-      <p className="mt-3 text-center text-xs text-slate-500">
-        Again = forgot · Hard = barely · Good = remembered · Easy = instant
+      <p className="mt-3 text-center font-mono text-xs text-dust/70">
+        space to flip · 1–4 to rate · Again = forgot, Easy = instant
       </p>
     </div>
   );
