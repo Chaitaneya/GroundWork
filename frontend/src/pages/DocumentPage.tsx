@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   ApiError,
   chatWithDocument,
@@ -19,6 +19,7 @@ interface Message {
 export default function DocumentPage() {
   const { documentId } = useParams();
   const id = Number(documentId);
+  const navigate = useNavigate();
 
   const [doc, setDoc] = useState<Document | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -86,29 +87,28 @@ export default function DocumentPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] flex-col gap-4 lg:h-[calc(100vh-7rem)] lg:flex-row">
+    <div className="flex h-[calc(100vh-8.5rem)] flex-col lg:h-[calc(100vh-7rem)]">
+      {/* page header with a clear way back */}
+      <div className="mb-3 flex items-center gap-3">
+        <button
+          onClick={() => (doc ? navigate(`/topics/${doc.topic_id}`) : navigate(-1))}
+          className="btn-quiet shrink-0 px-3 py-1.5 text-sm"
+        >
+          ← Back
+        </button>
+        <p className="min-w-0 truncate font-display text-lg font-semibold text-card">
+          {doc?.title ?? "Loading"}
+        </p>
+        {doc && (
+          <span className="ml-auto shrink-0 font-mono text-xs text-dust/80">
+            {doc.page_count} page{doc.page_count === 1 ? "" : "s"}
+          </span>
+        )}
+      </div>
+
+      <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
       {/* viewer */}
       <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-edge bg-lamp">
-        <div className="flex items-center justify-between border-b border-edge px-4 py-2.5">
-          <div className="min-w-0">
-            {doc && (
-              <Link
-                to={`/topics/${doc.topic_id}`}
-                className="text-xs text-marker hover:underline"
-              >
-                Back to topic
-              </Link>
-            )}
-            <p className="truncate text-sm font-medium text-card">
-              {doc?.title ?? "Loading"}
-            </p>
-          </div>
-          {doc && (
-            <span className="shrink-0 text-xs text-dust/80">
-              {doc.page_count} page{doc.page_count === 1 ? "" : "s"}
-            </span>
-          )}
-        </div>
         <div className="min-h-64 flex-1 bg-[#100e0b]">
           {viewerError && <p className="p-6 text-sm text-dust">{viewerError}</p>}
           {fileUrl && <iframe src={fileUrl} title="Document" className="h-full w-full" />}
@@ -188,6 +188,7 @@ export default function DocumentPage() {
           </button>
         </form>
       </section>
+      </div>
     </div>
   );
 }

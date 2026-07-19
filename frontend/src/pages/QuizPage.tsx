@@ -97,7 +97,7 @@ function QuestionForm({ quizId, onAdded }: { quizId: number; onAdded: (q: Questi
             type="button"
             onClick={() => setQtype(t)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-              qtype === t ? "bg-marker text-white" : "bg-[#2a2519] text-dust hover:bg-[#332d22]"
+              qtype === t ? "bg-marker text-ink" : "bg-[#2a2519] text-dust hover:bg-[#332d22]"
             }`}
           >
             {t === "mcq" ? "Multiple choice" : t === "true_false" ? "True / False" : "Short answer"}
