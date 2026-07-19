@@ -86,7 +86,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
       />
       {cards === null && <p className="text-dust">Loading…</p>}
       {cards !== null && cards.length === 0 && (
-        <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
+        <p className="rounded-lg border border-dashed border-edge p-6 text-center text-dust">
           No flashcards yet — add one below, then review it from the Review page.
         </p>
       )}
@@ -95,7 +95,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
           <li
             key={c.id}
             className={`rounded-lg border bg-lamp px-4 py-3 shadow-sm ${
-              c.pending ? "border-marker/40 bg-marker/8" : "border-edge"
+              c.pending ? "border-blue/30 bg-blue/5" : "border-edge"
             }`}
           >
             {editing?.id === c.id ? (
@@ -105,20 +105,20 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                   rows={2}
                   value={editing.front}
                   onChange={(e) => setEditing({ ...editing, front: e.target.value })}
-                  className="w-full rounded-lg border border-[#3d362a] px-3 py-1.5 text-sm focus:border-marker/70 focus:outline-none"
+                  className="w-full rounded-lg border border-edge px-3 py-1.5 text-sm focus:border-blue/60 focus:outline-none"
                 />
                 <textarea
                   required
                   rows={2}
                   value={editing.back}
                   onChange={(e) => setEditing({ ...editing, back: e.target.value })}
-                  className="w-full rounded-lg border border-[#3d362a] px-3 py-1.5 text-sm focus:border-marker/70 focus:outline-none"
+                  className="w-full rounded-lg border border-edge px-3 py-1.5 text-sm focus:border-blue/60 focus:outline-none"
                 />
                 <div className="flex gap-2">
-                  <button type="submit" className="rounded-lg bg-marker px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#ffe070]">
+                  <button type="submit" className="rounded-lg bg-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-bluedark">
                     Save
                   </button>
-                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-dust hover:text-card">
+                  <button type="button" onClick={() => setEditing(null)} className="px-3 py-1.5 text-sm text-dust hover:text-ink">
                     Cancel
                   </button>
                 </div>
@@ -127,11 +127,11 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1 space-y-1">
                   {c.pending && (
-                    <span className="rounded-full bg-marker/15 px-2 py-0.5 text-xs font-medium text-marker">
+                    <span className="rounded-full bg-blue/10 px-2 py-0.5 text-xs font-medium text-blue">
                       AI-generated — awaiting your review
                     </span>
                   )}
-                  <p className="font-medium text-card">{c.front}</p>
+                  <p className="font-medium text-ink">{c.front}</p>
                   <p className="text-sm text-dust">{c.back}</p>
                   <p className="text-xs text-dust/80">
                     {dueLabel(c)} · ease {c.ease_factor.toFixed(2)} · {c.repetitions} reps
@@ -144,13 +144,13 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                     <div className="flex gap-2 pt-1">
                       <button
                         onClick={() => onAccept(c.id)}
-                        className="rounded-lg bg-[#4c7a4f] px-3 py-1 text-xs font-semibold text-ink hover:bg-[#5b8f5e]"
+                        className="rounded-lg bg-[#4c7a4f] px-3 py-1 text-xs font-semibold text-white hover:bg-[#5b8f5e]"
                       >
                         Accept
                       </button>
                       <button
                         onClick={() => onDelete(c.id)}
-                        className="rounded-lg bg-lamp px-3 py-1 text-xs font-medium text-[#e88a7d] ring-1 ring-rule/40 hover:bg-rule/15"
+                        className="rounded-lg bg-lamp px-3 py-1 text-xs font-medium text-[#B4231F] ring-1 ring-rule/40 hover:bg-rule/15"
                       >
                         Discard
                       </button>
@@ -160,10 +160,10 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
                 <div className="flex shrink-0 gap-2">
                   <button
                     onClick={() => setEditing({ id: c.id, front: c.front, back: c.back })}
-                    className="text-sm text-dust/80 hover:text-[#ffe070]"
+                    className="text-sm text-dust/80 hover:text-bluedark"
                     title="Edit card"
                   ><PencilIcon /></button>
-                  <button onClick={() => onDelete(c.id)} className="text-sm text-dust/80 hover:text-[#e88a7d]" title="Delete card"><XIcon /></button>
+                  <button onClick={() => onDelete(c.id)} className="text-sm text-dust/80 hover:text-[#B4231F]" title="Delete card"><XIcon /></button>
                 </div>
               </div>
             )}
@@ -172,7 +172,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
       </ul>
 
       <form onSubmit={onCreate} className="max-w-xl space-y-3 rounded-xl border border-edge bg-lamp p-5 shadow-sm">
-        <h4 className="font-semibold text-card">Add a flashcard</h4>
+        <h4 className="font-semibold text-ink">Add a flashcard</h4>
         <textarea
           required
           rows={2}
@@ -180,7 +180,7 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
           placeholder="Front — the question or prompt"
           value={front}
           onChange={(e) => setFront(e.target.value)}
-          className="w-full rounded-lg border border-[#3d362a] px-3 py-2 text-sm focus:border-marker/70 focus:outline-none"
+          className="w-full rounded-lg border border-edge px-3 py-2 text-sm focus:border-blue/60 focus:outline-none"
         />
         <textarea
           required
@@ -189,10 +189,10 @@ export default function FlashcardsSection({ topicId }: { topicId: number }) {
           placeholder="Back — the answer"
           value={back}
           onChange={(e) => setBack(e.target.value)}
-          className="w-full rounded-lg border border-[#3d362a] px-3 py-2 text-sm focus:border-marker/70 focus:outline-none"
+          className="w-full rounded-lg border border-edge px-3 py-2 text-sm focus:border-blue/60 focus:outline-none"
         />
-        {error && <p className="text-sm text-[#e88a7d]">{error}</p>}
-        <button type="submit" className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]">
+        {error && <p className="text-sm text-[#B4231F]">{error}</p>}
+        <button type="submit" className="rounded-lg bg-blue px-4 py-2 font-medium text-white hover:bg-bluedark">
           Add card
         </button>
       </form>

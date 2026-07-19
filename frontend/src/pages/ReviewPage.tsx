@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { fetchReviewQueue, reviewFlashcard, type QueueCard } from "../api";
 
 const RATINGS: { value: 1 | 2 | 3 | 4; label: string; key: string; classes: string }[] = [
-  { value: 1, label: "Again", key: "1", classes: "bg-[#b14a3e] text-card hover:bg-[#c25546]" },
+  { value: 1, label: "Again", key: "1", classes: "bg-[#b14a3e] text-white hover:bg-[#c25546]" },
   { value: 2, label: "Hard", key: "2", classes: "bg-[#c9973a] text-ink hover:bg-[#d8a94e]" },
-  { value: 3, label: "Good", key: "3", classes: "bg-[#4c7a4f] text-card hover:bg-[#5b8f5e]" },
-  { value: 4, label: "Easy", key: "4", classes: "bg-[#4a6d8c] text-card hover:bg-[#557da0]" },
+  { value: 3, label: "Good", key: "3", classes: "bg-[#4c7a4f] text-white hover:bg-[#5b8f5e]" },
+  { value: 4, label: "Easy", key: "4", classes: "bg-[#4a6d8c] text-ink hover:bg-[#557da0]" },
 ];
 
 export default function ReviewPage() {
@@ -53,14 +53,14 @@ export default function ReviewPage() {
   if (!card) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <h2 className="font-display text-2xl font-semibold text-card">
+        <h2 className="font-display text-2xl font-semibold text-ink">
           {done > 0 ? `${done} card${done === 1 ? "" : "s"} reviewed.` : "Nothing due right now."}
         </h2>
         <p className="mt-2 text-dust">
           Cards come back when the schedule says so. Add more from any topic's
           Flashcards tab.
         </p>
-        <Link to="/dashboard" className="mt-4 inline-block font-medium text-marker hover:underline">
+        <Link to="/dashboard" className="mt-4 inline-block font-medium text-blue hover:underline">
           Back to dashboard
         </Link>
       </div>
@@ -77,15 +77,15 @@ export default function ReviewPage() {
       </div>
 
       {/* the index card */}
-      <div className="ruled min-h-64 rounded-lg bg-card p-7 pt-4 text-ink shadow-[0_18px_50px_rgba(0,0,0,0.5)]">
-        <p className="font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">Q</p>
+      <div className="ruled min-h-64 rounded-lg bg-card p-7 pt-4 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)]">
+        <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">Q</p>
         <p className="mt-3 font-display text-xl leading-relaxed font-semibold whitespace-pre-wrap">
           {card.front}
         </p>
 
         {revealed && (
           <>
-            <p className="mt-6 font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">A</p>
+            <p className="mt-6 font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">A</p>
             <p className="mt-2 text-lg leading-relaxed whitespace-pre-wrap">{card.back}</p>
           </>
         )}

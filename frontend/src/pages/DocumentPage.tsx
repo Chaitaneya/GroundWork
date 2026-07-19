@@ -96,7 +96,7 @@ export default function DocumentPage() {
         >
           ← Back
         </button>
-        <p className="min-w-0 truncate font-display text-lg font-semibold text-card">
+        <p className="min-w-0 truncate font-display text-lg font-semibold text-ink">
           {doc?.title ?? "Loading"}
         </p>
         {doc && (
@@ -109,7 +109,7 @@ export default function DocumentPage() {
       <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
       {/* viewer */}
       <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-edge bg-lamp">
-        <div className="min-h-64 flex-1 bg-[#100e0b]">
+        <div className="min-h-64 flex-1 bg-[#EAEEF3]">
           {viewerError && <p className="p-6 text-sm text-dust">{viewerError}</p>}
           {fileUrl && <iframe src={fileUrl} title="Document" className="h-full w-full" />}
           {fileText !== null && (
@@ -125,7 +125,7 @@ export default function DocumentPage() {
       {/* chat */}
       <section className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-edge bg-lamp lg:w-[380px]">
         <div className="border-b border-edge px-4 py-2.5">
-          <p className="text-sm font-medium text-card">Ask this document</p>
+          <p className="text-sm font-medium text-ink">Ask this document</p>
           <p className="text-xs text-dust/80">Answers come only from this file, with page references.</p>
         </div>
 
@@ -151,7 +151,7 @@ export default function DocumentPage() {
                       <span
                         key={j}
                         title={s.snippet}
-                        className="cursor-help rounded-full border border-marker/40 bg-marker/12 px-2 py-0.5 text-[11px] text-marker"
+                        className="cursor-help rounded-full border border-blue/30 bg-blue/10 px-2 py-0.5 text-[11px] text-blue"
                       >
                         p. {s.page_number}
                       </span>
@@ -176,12 +176,12 @@ export default function DocumentPage() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask anything about this file"
             maxLength={2000}
-            className="min-w-0 flex-1 rounded-xl border border-edge bg-lamp px-3 py-2 text-sm text-card placeholder:text-dust/80 focus:border-marker/70 focus:outline-none"
+            className="min-w-0 flex-1 rounded-xl border border-edge bg-lamp px-3 py-2 text-sm text-ink placeholder:text-dust/80 focus:border-blue/60 focus:outline-none"
           />
           <button
             type="submit"
             disabled={thinking || !input.trim()}
-            className="rounded-xl bg-marker px-3.5 text-ink transition hover:bg-[#ffe070] disabled:opacity-40"
+            className="rounded-xl bg-blue px-3.5 text-white transition hover:bg-bluedark disabled:opacity-40"
             title="Send"
           >
             <SendIcon />

@@ -20,9 +20,9 @@ const DocumentPage = lazy(() => import("./pages/DocumentPage"));
 function NotFoundPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-transparent px-4">
-      <h1 className="font-display text-6xl font-bold text-[#57503f]">404</h1>
+      <h1 className="font-display text-6xl font-bold text-[#C3CCD8]">404</h1>
       <p className="mt-2 text-dust">This page doesn't exist.</p>
-      <Link to="/" className="mt-4 font-medium text-marker hover:underline">
+      <Link to="/" className="mt-4 font-medium text-blue hover:underline">
         Take me home
       </Link>
     </main>
@@ -58,21 +58,21 @@ function Layout() {
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `font-medium transition ${isActive ? "text-marker" : "text-dust hover:text-card"}`
+                  `font-medium transition ${isActive ? "text-blue" : "text-dust hover:text-ink"}`
                 }
               >
                 {n.label}
               </NavLink>
             ))}
             <span className="text-dust/80">{user?.display_name}</span>
-            <button onClick={signOut} className="text-dust/80 hover:text-card">
+            <button onClick={signOut} className="text-dust/80 hover:text-ink">
               Sign out
             </button>
           </div>
           {/* mobile: just a sign-out affordance up top */}
           <button
             onClick={signOut}
-            className="text-sm font-medium text-dust hover:text-card sm:hidden"
+            className="text-sm font-medium text-dust hover:text-ink sm:hidden"
           >
             Sign out
           </button>
@@ -93,7 +93,7 @@ function Layout() {
               to={to}
               className={({ isActive }) =>
                 `flex flex-1 flex-col items-center gap-1 rounded-xl py-1.5 text-[11px] font-medium transition ${
-                  isActive ? "text-marker" : "text-dust"
+                  isActive ? "text-blue" : "text-dust"
                 }`
               }
             >

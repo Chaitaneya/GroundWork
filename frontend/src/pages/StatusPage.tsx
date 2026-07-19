@@ -44,7 +44,7 @@ export default function StatusPage() {
     <main className="min-h-screen bg-transparent px-4 py-12">
       <div className="mx-auto max-w-2xl space-y-6">
         <header>
-          <h1 className="text-3xl font-bold text-card">Groundwork</h1>
+          <h1 className="text-3xl font-bold text-ink">Groundwork</h1>
           <p className="mt-1 text-dust">System status</p>
         </header>
 
@@ -62,7 +62,7 @@ export default function StatusPage() {
           )}
           {health.state === "ok" && (
             <p className="flex items-center gap-2 text-chalk">
-              <StatusDot ok={true} /> FastAPI is up — <code className="rounded bg-[#2a2519] px-1">{health.data.app}</code>
+              <StatusDot ok={true} /> FastAPI is up — <code className="rounded bg-[#E4E9F0] px-1">{health.data.app}</code>
             </p>
           )}
         </Card>

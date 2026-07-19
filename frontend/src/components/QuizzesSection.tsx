@@ -53,7 +53,7 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
       />
       {quizzes === null && <p className="text-dust">Loading…</p>}
       {quizzes !== null && quizzes.length === 0 && (
-        <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
+        <p className="rounded-lg border border-dashed border-edge p-6 text-center text-dust">
           No quizzes yet — create one below, then add questions to it.
         </p>
       )}
@@ -62,14 +62,14 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
           <li
             key={q.id}
             className={`flex items-center justify-between rounded-lg border bg-lamp px-4 py-3 shadow-sm ${
-              q.pending ? "border-marker/40 bg-marker/8" : "border-edge"
+              q.pending ? "border-blue/30 bg-blue/5" : "border-edge"
             }`}
           >
             <Link to={`/quizzes/${q.id}`} className="min-w-0 flex-1">
-              <p className="font-medium text-card hover:text-[#ffe070]">
+              <p className="font-medium text-ink hover:text-bluedark">
                 {q.title}
                 {q.pending && (
-                  <span className="ml-2 rounded-full bg-marker/15 px-2 py-0.5 text-xs font-medium text-marker">
+                  <span className="ml-2 rounded-full bg-blue/10 px-2 py-0.5 text-xs font-medium text-blue">
                     AI — review
                   </span>
                 )}
@@ -82,12 +82,12 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
               {q.pending && (
                 <button
                   onClick={() => onAccept(q.id)}
-                  className="rounded-lg bg-[#4c7a4f] px-3 py-1 text-xs font-semibold text-ink hover:bg-[#5b8f5e]"
+                  className="rounded-lg bg-[#4c7a4f] px-3 py-1 text-xs font-semibold text-white hover:bg-[#5b8f5e]"
                 >
                   Accept
                 </button>
               )}
-              <button onClick={() => onDelete(q.id)} className="text-sm text-dust/80 hover:text-[#e88a7d]" title="Delete quiz"><XIcon /></button>
+              <button onClick={() => onDelete(q.id)} className="text-sm text-dust/80 hover:text-[#B4231F]" title="Delete quiz"><XIcon /></button>
             </div>
           </li>
         ))}
@@ -100,12 +100,12 @@ export default function QuizzesSection({ topicId }: { topicId: number }) {
           placeholder="Quiz title, e.g. Normalization basics"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 rounded-lg border border-[#3d362a] px-3 py-2 focus:border-marker/70 focus:outline-none"
+          className="flex-1 rounded-lg border border-edge px-3 py-2 focus:border-blue/60 focus:outline-none"
         />
-        <button type="submit" className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]">
+        <button type="submit" className="rounded-lg bg-blue px-4 py-2 font-medium text-white hover:bg-bluedark">
           Create
         </button>
-        {error && <p className="text-sm text-[#e88a7d]">{error}</p>}
+        {error && <p className="text-sm text-[#B4231F]">{error}</p>}
       </form>
     </div>
   );

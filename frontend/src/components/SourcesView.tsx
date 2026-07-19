@@ -16,7 +16,7 @@ export default function SourcesView({ fetch }: { fetch: () => Promise<Chunk[]> }
     <div>
       <button
         onClick={toggle}
-        className="text-xs font-medium text-marker hover:underline"
+        className="text-xs font-medium text-blue hover:underline"
       >
         {open ? "Hide sources" : "Show sources"}
       </button>
@@ -29,7 +29,7 @@ export default function SourcesView({ fetch }: { fetch: () => Promise<Chunk[]> }
           {(chunks ?? []).map((c) => (
             <blockquote
               key={c.id}
-              className="rounded-lg border-l-2 border-marker/40 bg-transparent px-3 py-2"
+              className="rounded-lg border-l-2 border-blue/30 bg-transparent px-3 py-2"
             >
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-dust/80">
                 Source · page {c.page_number}

@@ -70,11 +70,11 @@ export default function SubjectsPage() {
   return (
     <div className="space-y-8">
       <section>
-        <h2 className="mb-4 text-xl font-semibold text-card">Your subjects</h2>
+        <h2 className="mb-4 text-xl font-semibold text-ink">Your subjects</h2>
         {subjects === null && !error && <p className="text-dust">Loading…</p>}
-        {error && <p className="mb-3 text-sm text-[#e88a7d]">{error}</p>}
+        {error && <p className="mb-3 text-sm text-[#B4231F]">{error}</p>}
         {subjects !== null && subjects.length === 0 && (
-          <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
+          <p className="rounded-lg border border-dashed border-edge p-6 text-center text-dust">
             No subjects yet — create your first one below.
           </p>
         )}
@@ -82,7 +82,7 @@ export default function SubjectsPage() {
           {(subjects ?? []).map((s) => (
             <li
               key={s.id}
-              className="group rounded-xl border border-edge bg-lamp p-5 shadow-sm transition hover:border-marker/50"
+              className="group rounded-xl border border-edge bg-lamp p-5 shadow-sm transition hover:border-blue/40"
             >
               {draft?.id === s.id ? (
                 <form onSubmit={onSaveEdit} className="space-y-2">
@@ -91,26 +91,26 @@ export default function SubjectsPage() {
                     maxLength={200}
                     value={draft.name}
                     onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                    className="w-full rounded-lg border border-[#3d362a] px-3 py-1.5 focus:border-marker/70 focus:outline-none"
+                    className="w-full rounded-lg border border-edge px-3 py-1.5 focus:border-blue/60 focus:outline-none"
                   />
                   <input
                     maxLength={2000}
                     placeholder="Description (optional)"
                     value={draft.description}
                     onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-                    className="w-full rounded-lg border border-[#3d362a] px-3 py-1.5 focus:border-marker/70 focus:outline-none"
+                    className="w-full rounded-lg border border-edge px-3 py-1.5 focus:border-blue/60 focus:outline-none"
                   />
                   <div className="flex gap-2">
                     <button
                       type="submit"
-                      className="rounded-lg bg-marker px-3 py-1.5 text-sm font-medium text-ink hover:bg-[#ffe070]"
+                      className="rounded-lg bg-blue px-3 py-1.5 text-sm font-medium text-white hover:bg-bluedark"
                     >
                       Save
                     </button>
                     <button
                       type="button"
                       onClick={() => setDraft(null)}
-                      className="rounded-lg px-3 py-1.5 text-sm text-dust hover:text-card"
+                      className="rounded-lg px-3 py-1.5 text-sm text-dust hover:text-ink"
                     >
                       Cancel
                     </button>
@@ -119,7 +119,7 @@ export default function SubjectsPage() {
               ) : (
                 <div className="flex items-start justify-between gap-2">
                   <Link to={`/subjects/${s.id}`} className="min-w-0 flex-1">
-                    <h3 className="truncate font-semibold text-card group-hover:text-[#ffe070]">
+                    <h3 className="truncate font-semibold text-ink group-hover:text-bluedark">
                       {s.name}
                     </h3>
                     {s.description && (
@@ -134,12 +134,12 @@ export default function SubjectsPage() {
                       onClick={() =>
                         setDraft({ id: s.id, name: s.name, description: s.description })
                       }
-                      className="text-sm text-dust/80 hover:text-[#ffe070]"
+                      className="text-sm text-dust/80 hover:text-bluedark"
                       title="Edit subject"
                     ><PencilIcon /></button>
                     <button
                       onClick={() => onDelete(s.id)}
-                      className="text-sm text-dust/80 hover:text-[#e88a7d]"
+                      className="text-sm text-dust/80 hover:text-[#B4231F]"
                       title="Delete subject"
                     ><XIcon /></button>
                   </div>
@@ -151,7 +151,7 @@ export default function SubjectsPage() {
       </section>
 
       <section className="max-w-md">
-        <h2 className="mb-4 text-xl font-semibold text-card">Add a subject</h2>
+        <h2 className="mb-4 text-xl font-semibold text-ink">Add a subject</h2>
         <form onSubmit={onCreate} className="space-y-3 rounded-xl border border-edge bg-lamp p-5 shadow-sm">
           <input
             required
@@ -159,18 +159,18 @@ export default function SubjectsPage() {
             placeholder="Subject name, e.g. Operating Systems"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-[#3d362a] px-3 py-2 focus:border-marker/70 focus:outline-none"
+            className="w-full rounded-lg border border-edge px-3 py-2 focus:border-blue/60 focus:outline-none"
           />
           <input
             maxLength={2000}
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-lg border border-[#3d362a] px-3 py-2 focus:border-marker/70 focus:outline-none"
+            className="w-full rounded-lg border border-edge px-3 py-2 focus:border-blue/60 focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
+            className="rounded-lg bg-blue px-4 py-2 font-medium text-white hover:bg-bluedark"
           >
             Add subject
           </button>

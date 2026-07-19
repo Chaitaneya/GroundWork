@@ -6,7 +6,7 @@ function StatTile({ label, value, hint }: { label: string; value: string; hint?:
   return (
     <div className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
       <p className="text-sm text-dust">{label}</p>
-      <p className="mt-1 text-3xl font-bold text-card">{value}</p>
+      <p className="mt-1 text-3xl font-bold text-ink">{value}</p>
       {hint && <p className="mt-1 text-xs text-dust/80">{hint}</p>}
     </div>
   );
@@ -21,15 +21,15 @@ function WeaknessRow({ t }: { t: TopicStat }) {
   return (
     <li className="py-3">
       <div className="mb-1 flex items-baseline justify-between gap-3">
-        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-card hover:text-[#ffe070]">
+        <Link to={`/topics/${t.topic_id}`} className="min-w-0 truncate font-medium text-ink hover:text-bluedark">
           {t.topic_name}
           <span className="ml-2 text-xs font-normal text-dust/80">{t.subject_name}</span>
         </Link>
         <span className="shrink-0 text-sm font-semibold text-chalk">{t.weakness}</span>
       </div>
       {/* single-hue magnitude bar: length encodes weakness, color stays constant */}
-      <div className="h-2.5 w-full overflow-hidden rounded bg-[#2a2519]" title={`Weakness ${t.weakness} / 100`}>
-        <div className="h-full rounded bg-marker" style={{ width: `${t.weakness}%` }} />
+      <div className="h-2.5 w-full overflow-hidden rounded bg-[#E4E9F0]" title={`Weakness ${t.weakness} / 100`}>
+        <div className="h-full rounded bg-blue" style={{ width: `${t.weakness}%` }} />
       </div>
       <p className="mt-1 text-xs text-dust/80">{parts.join(" · ")}</p>
     </li>
@@ -44,7 +44,7 @@ export default function DashboardPage() {
     fetchDashboard().then(setData).catch((e: Error) => setError(e.message));
   }, []);
 
-  if (error) return <p className="text-[#e88a7d]">{error}</p>;
+  if (error) return <p className="text-[#B4231F]">{error}</p>;
   if (!data) return <p className="text-dust">Loading your dashboard…</p>;
 
   const ranked = data.topics
@@ -56,7 +56,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-xl font-semibold text-card">Dashboard</h2>
+      <h2 className="text-xl font-semibold text-ink">Dashboard</h2>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatTile
@@ -71,14 +71,14 @@ export default function DashboardPage() {
       {data.due_now > 0 && (
         <Link
           to="/review"
-          className="inline-block rounded-lg bg-marker px-4 py-2 font-medium text-ink hover:bg-[#ffe070]"
+          className="inline-block rounded-lg bg-blue px-4 py-2 font-medium text-white hover:bg-bluedark"
         >
           Start reviewing →
         </Link>
       )}
 
       <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
-        <h3 className="font-semibold text-card">Weakest topics</h3>
+        <h3 className="font-semibold text-ink">Weakest topics</h3>
         <p className="mt-0.5 text-xs text-dust/80">
           Score 0–100 from recent quiz accuracy, forgotten reviews, and card ease — higher means weaker.
         </p>
@@ -102,13 +102,13 @@ export default function DashboardPage() {
 
       <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
-          <h3 className="font-semibold text-card">Review activity — last 7 days</h3>
+          <h3 className="font-semibold text-ink">Review activity — last 7 days</h3>
           <div className="mt-4 flex h-32 items-end gap-2">
             {data.reviews_by_day.map((d) => (
               <div key={d.day} className="flex flex-1 flex-col items-center gap-1" title={`${d.day}: ${d.count} reviews`}>
                 <span className="text-xs text-dust">{d.count > 0 ? d.count : ""}</span>
                 <div
-                  className="w-full max-w-8 rounded-t bg-marker"
+                  className="w-full max-w-8 rounded-t bg-blue"
                   style={{ height: `${Math.max(d.count > 0 ? 8 : 2, (d.count / maxDay) * 96)}px` }}
                 />
                 <span className="text-[10px] text-dust/80">{d.day.slice(5)}</span>
@@ -118,7 +118,7 @@ export default function DashboardPage() {
         </section>
 
         <section className="rounded-xl border border-edge bg-lamp p-5 shadow-sm">
-          <h3 className="font-semibold text-card">Recent quiz attempts</h3>
+          <h3 className="font-semibold text-ink">Recent quiz attempts</h3>
           {data.recent_attempts.length === 0 ? (
             <p className="mt-4 text-sm text-dust">No attempts yet — take a quiz from any topic.</p>
           ) : (
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                     <span className="ml-2 text-xs text-dust/80">{a.topic_name}</span>
                   </span>
                   <span className={`shrink-0 font-semibold ${
-                    (a.score_pct ?? 0) >= 60 ? "text-[#8fcf92]" : "text-[#e88a7d]"
+                    (a.score_pct ?? 0) >= 60 ? "text-[#1A7F37]" : "text-[#B4231F]"
                   }`}>
                     {a.score_pct}%
                   </span>

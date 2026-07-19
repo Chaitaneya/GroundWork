@@ -16,9 +16,9 @@ import {
 
 function StatusBadge({ status }: { status: Document["status"] }) {
   const styles = {
-    processing: "bg-marker/15 text-marker",
-    ready: "bg-[#4c7a4f]/25 text-[#9fd8a2]",
-    failed: "bg-rule/20 text-[#eda297]",
+    processing: "bg-blue/10 text-blue",
+    ready: "bg-[#1A7F37]/12 text-[#1A7F37]",
+    failed: "bg-rule/20 text-[#B4231F]",
   }[status];
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${styles}`}>
@@ -86,11 +86,11 @@ export default function TopicPage() {
     <div className="space-y-8">
       <div>
         {topic && (
-          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-marker hover:underline">
+          <Link to={`/subjects/${topic.subject_id}`} className="text-sm text-blue hover:underline">
             ← Back to subject
           </Link>
         )}
-        <h2 className="mt-2 text-2xl font-bold text-card">{topic?.name ?? "…"}</h2>
+        <h2 className="mt-2 text-2xl font-bold text-ink">{topic?.name ?? "…"}</h2>
         {topic?.description && <p className="mt-1 text-dust">{topic.description}</p>}
       </div>
 
@@ -101,8 +101,8 @@ export default function TopicPage() {
             onClick={() => setTab(t)}
             className={`shrink-0 rounded-t-lg px-4 py-2 text-sm font-medium ${
               tab === t
-                ? "border border-b-0 border-edge bg-lamp text-marker"
-                : "text-dust hover:text-card"
+                ? "border border-b-0 border-edge bg-lamp text-blue"
+                : "text-dust hover:text-ink"
             }`}
           >
             {t}
@@ -115,7 +115,7 @@ export default function TopicPage() {
       {tab === "Quizzes" && <QuizzesSection topicId={id} />}
 
       <section className={tab === "Documents" ? "" : "hidden"}>
-        <h3 className="mb-4 text-lg font-semibold text-card">Reading material</h3>
+        <h3 className="mb-4 text-lg font-semibold text-ink">Reading material</h3>
 
         <form
           onSubmit={onUpload}
@@ -126,22 +126,22 @@ export default function TopicPage() {
             type="file"
             accept=".pdf,.txt,.md"
             required
-            className="text-sm text-dust file:mr-3 file:rounded-lg file:border-0 file:bg-[#2a2519] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-marker hover:file:bg-[#332d22]"
+            className="text-sm text-dust file:mr-3 file:rounded-lg file:border-0 file:bg-[#E4E9F0] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue hover:file:bg-[#DDE3EB]"
           />
           <button
             type="submit"
             disabled={uploading}
-            className="rounded-lg bg-marker px-4 py-1.5 text-sm font-medium text-ink hover:bg-[#ffe070] disabled:opacity-50"
+            className="rounded-lg bg-blue px-4 py-1.5 text-sm font-medium text-white hover:bg-bluedark disabled:opacity-50"
           >
             {uploading ? "Uploading…" : "Upload"}
           </button>
           <span className="text-xs text-dust/80">PDF, TXT, or MD · max 25 MB</span>
         </form>
-        {error && <p className="mb-3 text-sm text-[#e88a7d]">{error}</p>}
+        {error && <p className="mb-3 text-sm text-[#B4231F]">{error}</p>}
 
         {documents === null && <p className="text-dust">Loading…</p>}
         {documents !== null && documents.length === 0 && (
-          <p className="rounded-lg border border-dashed border-[#3d362a] p-6 text-center text-dust">
+          <p className="rounded-lg border border-dashed border-edge p-6 text-center text-dust">
             No documents yet — upload the reading material for this topic.
           </p>
         )}
@@ -151,7 +151,7 @@ export default function TopicPage() {
             <li key={d.id} className="rounded-lg border border-edge bg-lamp shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
                 <div className="min-w-0">
-                  <p className="flex items-center gap-2 font-medium text-card">
+                  <p className="flex items-center gap-2 font-medium text-ink">
                     {d.title} <StatusBadge status={d.status} />
                   </p>
                   <p className="text-xs text-dust">
@@ -159,21 +159,21 @@ export default function TopicPage() {
                     {d.status === "ready" && ` · ${d.page_count} page${d.page_count === 1 ? "" : "s"}`}
                   </p>
                   {d.status === "failed" && d.error && (
-                    <p className="mt-1 text-sm text-[#e88a7d]">{d.error}</p>
+                    <p className="mt-1 text-sm text-[#B4231F]">{d.error}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
                   {d.status === "ready" && (
                     <Link
                       to={`/documents/${d.id}`}
-                      className="rounded-lg border border-marker/40 bg-marker/12 px-3 py-1 text-sm font-medium text-marker transition hover:bg-marker/25"
+                      className="rounded-lg border border-blue/30 bg-blue/10 px-3 py-1 text-sm font-medium text-blue transition hover:bg-blue/15"
                     >
                       Open
                     </Link>
                   )}
                   <button
                     onClick={() => onDelete(d.id)}
-                    className="text-sm text-dust/80 hover:text-[#e88a7d]"
+                    className="text-sm text-dust/80 hover:text-[#B4231F]"
                     title="Delete document"
                   ><XIcon /></button>
                 </div>

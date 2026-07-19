@@ -38,7 +38,7 @@ function IndexCardStack() {
 
   const card = DEMO_CARDS[i];
   const face =
-    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_18px_50px_rgba(0,0,0,0.55)] [backface-visibility:hidden]";
+    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)] [backface-visibility:hidden]";
 
   return (
     <div
@@ -53,21 +53,21 @@ function IndexCardStack() {
         className="relative h-full w-full [transform-style:preserve-3d]"
       >
         {/* the rest of the deck */}
-        <div className="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-lg bg-[#e9e2d2]" />
-        <div className="absolute inset-0 -translate-x-3 translate-y-2 -rotate-2 rounded-lg bg-[#efe9da]" />
+        <div className="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-lg bg-[#E8ECF1]" />
+        <div className="absolute inset-0 -translate-x-3 translate-y-2 -rotate-2 rounded-lg bg-[#F1F4F8]" />
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
           transition={{ duration: 0.65, ease: [0.3, 0, 0.2, 1] }}
           className="relative h-full w-full [transform-style:preserve-3d]"
         >
           <div className={face}>
-            <p className="font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">Q</p>
+            <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">Q</p>
             <p className="mt-3 font-display text-xl leading-snug font-semibold">{card.q}</p>
           </div>
           <div className={`${face} [transform:rotateY(180deg)]`}>
-            <p className="font-mono text-[11px] tracking-wide text-[#a89f8c] uppercase">A</p>
+            <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">A</p>
             <p className="mt-3 text-lg leading-snug">{card.a}</p>
-            <p className="mt-auto self-start rounded border border-[#d8d0bd] bg-[#efe9da] px-2 py-0.5 font-mono text-[11px] text-[#6b6350]">
+            <p className="mt-auto self-start rounded border border-edge bg-[#F1F4F8] px-2 py-0.5 font-mono text-[11px] text-[#5B6B80]">
               source: your PDF, p.{card.page}
             </p>
           </div>
@@ -98,7 +98,7 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
           <Wordmark merge />
           <div className="flex items-center gap-3 text-sm">
-            <Link to="/login" className="px-3 py-1.5 text-dust transition hover:text-card">
+            <Link to="/login" className="px-3 py-1.5 text-dust transition hover:text-ink">
               Sign in
             </Link>
             <Link to="/register" className="btn-marker px-4 py-1.5 text-sm">
@@ -123,7 +123,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08 }}
-            className="mt-4 font-display text-[2.6rem] leading-[1.08] font-bold tracking-tight text-card sm:text-6xl"
+            className="mt-4 font-display text-[2.6rem] leading-[1.08] font-bold tracking-tight text-ink sm:text-6xl"
           >
             Flashcards with <span className="mark rounded-sm">receipts.</span>
           </motion.h1>
@@ -164,14 +164,14 @@ export default function LandingPage() {
 
       {/* how it works — a real sequence, so numbers mean something */}
       <section id="how" className="mx-auto max-w-6xl px-5 py-16">
-        <motion.h2 {...rise} className="font-display text-3xl font-bold text-card">
+        <motion.h2 {...rise} className="font-display text-3xl font-bold text-ink">
           Three steps, then it runs itself
         </motion.h2>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {STEPS.map(([title, body], idx) => (
             <motion.div key={title} {...rise} className="panel p-6">
               <p className="font-mono text-xs text-dust">step {idx + 1} of 3</p>
-              <h3 className="mt-2 font-display text-lg font-semibold text-card">{title}</h3>
+              <h3 className="mt-2 font-display text-lg font-semibold text-ink">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-dust">{body}</p>
             </motion.div>
           ))}
@@ -182,7 +182,7 @@ export default function LandingPage() {
       <section className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <motion.div {...rise}>
-            <h2 className="font-display text-3xl font-bold text-card">
+            <h2 className="font-display text-3xl font-bold text-ink">
               Ask it anything.
               <br />
               It answers <span className="mark rounded-sm">from the page.</span>
@@ -196,7 +196,7 @@ export default function LandingPage() {
           </motion.div>
           <motion.div {...rise} className="panel p-6">
             <p className="font-mono text-xs text-dust">from a real study session</p>
-            <p className="mt-3 font-medium text-card">
+            <p className="mt-3 font-medium text-ink">
               Which algorithm suffers from the convoy effect?
             </p>
             <p className="mt-2 text-sm leading-relaxed text-dust">
@@ -217,7 +217,7 @@ export default function LandingPage() {
       {/* spaced repetition */}
       <section className="mx-auto max-w-6xl px-5 py-16">
         <motion.div {...rise} className="panel p-8">
-          <h2 className="font-display text-3xl font-bold text-card">
+          <h2 className="font-display text-3xl font-bold text-ink">
             Reviewed today. Then in 6 days. Then 15.
           </h2>
           <p className="mt-3 max-w-lg leading-relaxed text-dust">
@@ -233,7 +233,7 @@ export default function LandingPage() {
                 whileInView={{ height: Number(h) }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, ease: "easeOut" }}
-                className="flex w-14 flex-col justify-end rounded-t bg-marker"
+                className="flex w-14 flex-col justify-end rounded-t bg-blue"
               >
                 <span className="pb-1 text-center font-mono text-xs font-medium text-ink">{label}</span>
               </motion.div>
@@ -245,7 +245,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="px-5 py-24 text-center">
-        <motion.h2 {...rise} className="font-display text-4xl font-bold text-card">
+        <motion.h2 {...rise} className="font-display text-4xl font-bold text-ink">
           Lay the <span className="mark rounded-sm">groundwork</span> tonight.
         </motion.h2>
         <motion.div {...rise} className="mt-8">

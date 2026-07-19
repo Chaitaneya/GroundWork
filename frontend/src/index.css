@@ -1,92 +1,114 @@
-@import "@fontsource-variable/bricolage-grotesque";
-@import "@fontsource-variable/figtree";
+@import "@fontsource-variable/archivo";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   GroundWork — "Night Desk"
-   A student's desk after dark: warm near-black wood, card-stock
-   index cards, one highlighter, page numbers in monospace.
-   desk    #161310   ground
-   lamp    #1F1B15   raised dark surface
-   card    #F4EFE3   card stock (light objects on the dark desk)
-   ink     #201D17   text on card stock
-   chalk   #EAE4D6   text on dark
-   dust    #97907F   muted text
-   marker  #FFD43B   highlighter yellow (always carries ink text)
-   rule    #D95B4E   the index-card red top rule
+   GroundWork — "Blueprint"
+   Groundwork = foundations. The audience is engineering students; their
+   world is graph paper, drafting ink, and title blocks. Paper-white
+   ground with a faint grid, blueprint-blue ink, mono labels. The ruled
+   index card and the highlighter live on — they belong on paper.
+
+   Token names are stable across themes; only their values change:
+   desk    #F4F6F8   paper ground (grid rides on it)
+   lamp    #FFFFFF   a white sheet (panels, cards)
+   card    #FFFDF6   warm card stock (flashcards)
+   ink     #17273B   drafting ink (primary text)
+   chalk   #2C3E53   secondary text
+   dust    #64748B   muted text
+   marker  #FFD43B   highlighter (swipes + pending tints only)
+   rule    #D9534A   the index-card red rule
+   edge    #D9E0E8   hairline borders
+   blue    #24409A   blueprint blue (actions, links, data)
 ------------------------------------------------------------------- */
 
 @theme {
-  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --color-desk: #161310;
-  --color-lamp: #1f1b15;
-  --color-card: #f4efe3;
-  --color-ink: #201d17;
-  --color-chalk: #eae4d6;
-  --color-dust: #97907f;
+  --color-desk: #f4f6f8;
+  --color-lamp: #ffffff;
+  --color-card: #fffdf6;
+  --color-ink: #17273b;
+  --color-chalk: #2c3e53;
+  --color-dust: #64748b;
   --color-marker: #ffd43b;
-  --color-rule: #d95b4e;
-  --color-edge: #332d22;
+  --color-rule: #d9534a;
+  --color-edge: #d9e0e8;
+  --color-blue: #24409a;
+  --color-bluedark: #1a3178;
 }
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
   body {
-    @apply overflow-x-hidden bg-desk font-sans text-chalk antialiased;
+    @apply overflow-x-hidden bg-desk font-sans text-ink antialiased;
+  }
+  /* the graph-paper grid, fixed behind everything */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(36, 64, 154, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(36, 64, 154, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
   input,
   textarea,
   select {
-    @apply bg-lamp text-chalk placeholder:text-dust/70;
+    @apply bg-lamp text-ink placeholder:text-dust/70;
   }
   ::selection {
-    background: rgba(255, 212, 59, 0.45);
-    color: #201d17;
+    background: rgba(36, 64, 154, 0.18);
   }
   :focus-visible {
-    outline: 2px solid #ffd43b;
+    outline: 2px solid #24409a;
     outline-offset: 2px;
   }
 }
 
 @layer components {
-  /* highlighter swipe: dark text on a slightly skewed yellow stroke */
+  /* highlighter swipe — a real yellow stroke behind ink text */
   .mark {
     background: linear-gradient(100deg, transparent 1%, #ffd43b 4%, #ffd43b 96%, transparent 99%);
-    color: #201d17;
+    color: #17273b;
     padding: 0 0.15em;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
-  /* an index card: card stock with the classic red top rule */
+  /* ruled index card (red top rule + faint blue lines) */
   .index-card {
-    @apply rounded-lg bg-card text-ink shadow-[0_10px_30px_rgba(0,0,0,0.45)];
-    background-image: linear-gradient(to bottom, transparent 2.4rem, #d95b4e 2.4rem, #d95b4e calc(2.4rem + 2px), transparent calc(2.4rem + 2px));
+    @apply rounded-lg border border-edge bg-card text-ink shadow-[0_10px_28px_rgba(23,39,59,0.10)];
   }
-  /* faint ruled lines, for card faces */
   .ruled {
     background-image:
-      linear-gradient(to bottom, transparent 2.4rem, #d95b4e 2.4rem, #d95b4e calc(2.4rem + 2px), transparent calc(2.4rem + 2px)),
-      repeating-linear-gradient(to bottom, transparent, transparent calc(1.75rem - 1px), rgba(90, 120, 160, 0.18) calc(1.75rem - 1px), rgba(90, 120, 160, 0.18) 1.75rem);
+      linear-gradient(to bottom, transparent 2.4rem, #d9534a 2.4rem, #d9534a calc(2.4rem + 2px), transparent calc(2.4rem + 2px)),
+      repeating-linear-gradient(to bottom, transparent, transparent calc(1.75rem - 1px), rgba(36, 64, 154, 0.14) calc(1.75rem - 1px), rgba(36, 64, 154, 0.14) 1.75rem);
   }
-  /* dark panel on the desk */
+  /* a white sheet on the drafting table */
   .panel {
-    @apply rounded-xl border border-edge bg-lamp;
+    @apply rounded-xl border border-edge bg-lamp shadow-[0_1px_3px_rgba(23,39,59,0.06)];
   }
   .btn-marker {
-    @apply rounded-lg bg-marker px-4 py-2 font-semibold text-ink transition hover:bg-[#ffe070];
+    @apply rounded-lg bg-blue px-4 py-2 font-semibold text-white transition hover:bg-bluedark;
   }
   .btn-quiet {
-    @apply rounded-lg border border-edge px-4 py-2 font-medium text-chalk transition hover:border-dust/60 hover:text-card;
+    @apply rounded-lg border border-edge bg-lamp px-4 py-2 font-medium text-chalk transition hover:border-blue/40 hover:text-blue;
   }
-  /* citation chip: mono, like a footnote reference */
+  /* blueprint title-block label */
+  .label {
+    @apply font-mono text-[11px] tracking-[0.14em] text-blue uppercase;
+  }
   .cite {
     @apply rounded border border-edge bg-desk px-1.5 py-0.5 font-mono text-[11px] text-dust;
   }
