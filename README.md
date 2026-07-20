@@ -28,31 +28,6 @@ groundwork/
 
 FastAPI · SQLAlchemy 2.0 · PostgreSQL (Neon) + pgvector · React + Vite + TypeScript · Tailwind · Gemini API
 
-## Running locally
 
-One-time setup:
-
-```bash
-# Backend
-cd backend
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-cp .env.example .env        # then paste your Neon DATABASE_URL into .env
-.venv/bin/alembic upgrade head
-
-# Frontend
-cd ../frontend
-npm install
-```
-
-Every dev session (two terminals):
-
-```bash
-# Terminal 1 — API on :8000
-cd backend && .venv/bin/uvicorn app.main:app --reload --port 8000
-
-# Terminal 2 — UI on :5173
-cd frontend && npm run dev
-```
 
 Open http://localhost:5173 — the status page shows whether the API and database are reachable. Interactive API docs live at http://localhost:8000/docs.
