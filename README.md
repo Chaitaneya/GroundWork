@@ -7,7 +7,6 @@
 [![Live](https://img.shields.io/badge/Live-groundwork--three.vercel.app-4A7C59?style=flat-square)](https://groundwork-three.vercel.app)
 [![Backend](https://img.shields.io/badge/API-Render-46E3B7?style=flat-square)](https://groundwork-three.vercel.app)
 [![Stack](https://img.shields.io/badge/Stack-FastAPI%20%2B%20React-blue?style=flat-square)](#stack)
-[![License](https://img.shields.io/badge/License-MIT-grey?style=flat-square)](LICENSE)
 
 </div>
 
