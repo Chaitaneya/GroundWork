@@ -47,7 +47,7 @@ function IndexCardStack() {
 
   const card = DEMO_CARDS[i];
   const face =
-    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)] [backface-visibility:hidden] [transform:translateZ(0)]";
+    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)] [backface-visibility:hidden]";
 
   return (
     <div
