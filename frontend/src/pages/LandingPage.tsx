@@ -1,21 +1,31 @@
-import { motion } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Wordmark from "../components/Wordmark";
 
 const DEMO_CARDS = [
-  { q: "What is the convoy effect in FCFS scheduling?", a: "Short processes stuck waiting behind one long CPU-bound process.", page: 3 },
-  { q: "Which normal form removes partial dependencies?", a: "2NF — full dependency on the whole candidate key.", page: 12 },
-  { q: "What are the four Coffman conditions?", a: "Mutual exclusion, hold & wait, no preemption, circular wait.", page: 7 },
+  { tag: "Operating Systems", q: "What is the convoy effect in FCFS scheduling?", a: "Short processes pile up behind one long CPU-bound process, so average waiting time balloons.", page: 3 },
+  { tag: "DBMS", q: "Which normal form removes partial dependencies?", a: "2NF — every non-key attribute must depend on the whole candidate key, not just part of it.", page: 12 },
+  { tag: "Operating Systems", q: "Name the four Coffman conditions for deadlock.", a: "Mutual exclusion, hold and wait, no preemption, and circular wait — all four must hold at once.", page: 7 },
+  { tag: "Networks", q: "Why is TCP called a reliable protocol?", a: "It numbers every byte, acknowledges receipt, and retransmits anything lost — delivery is guaranteed and in order.", page: 21 },
+  { tag: "DBMS", q: "What problem does an index solve?", a: "It lets the database find rows without scanning the whole table — turning an O(n) lookup into O(log n).", page: 34 },
+  { tag: "Data Structures", q: "When is a hash map the wrong choice?", a: "When you need ordering or range queries — hashing scatters keys, so a balanced tree fits better.", page: 9 },
 ];
 
-/** The hero object: a real index card on the desk. Tilts toward the cursor,
- *  flips through actual Q/As, cites its page like a footnote. */
+/** The hero object: a real index card on the desk. Tilts toward the cursor
+ *  (via motion values, so it never triggers a React re-render), flips through
+ *  actual Q/As, and cites its page like a footnote. */
 function IndexCardStack() {
   const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const reduceMotion = useReducedMotion();
+
+  // Tilt lives in motion values, smoothed by springs — updating these does
+  // NOT re-render the component, which is what kills the lag on mouse move.
+  const rx = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 });
+  const ry = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 });
+  const transform = useMotionTemplate`perspective(1200px) rotateX(${rx}deg) rotateY(${ry}deg)`;
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -23,50 +33,55 @@ function IndexCardStack() {
         if (f) setI((n) => (n + 1) % DEMO_CARDS.length);
         return !f;
       });
-    }, 2800);
+    }, 3200);
     return () => clearInterval(t);
   }, []);
 
   function onMove(e: React.MouseEvent) {
+    if (reduceMotion) return;
     const r = ref.current?.getBoundingClientRect();
     if (!r) return;
-    setTilt({
-      y: ((e.clientX - r.left) / r.width - 0.5) * 10,
-      x: -((e.clientY - r.top) / r.height - 0.5) * 10,
-    });
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 12);
+    rx.set(-((e.clientY - r.top) / r.height - 0.5) * 12);
   }
 
   const card = DEMO_CARDS[i];
   const face =
-    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)] [backface-visibility:hidden]";
+    "ruled absolute inset-0 flex flex-col rounded-lg bg-card p-6 pt-3 text-ink shadow-[0_14px_36px_rgba(23,39,59,0.14)] [backface-visibility:hidden] [transform:translateZ(0)]";
 
   return (
     <div
       ref={ref}
       onMouseMove={onMove}
-      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
-      className="relative mx-auto aspect-[5/3] w-full max-w-md [perspective:1200px]"
+      onMouseLeave={() => {
+        rx.set(0);
+        ry.set(0);
+      }}
+      className="relative mx-auto aspect-[5/3] w-full max-w-md"
     >
-      <motion.div
-        animate={{ rotateX: tilt.x, rotateY: tilt.y }}
-        transition={{ type: "spring", stiffness: 120, damping: 16 }}
-        className="relative h-full w-full [transform-style:preserve-3d]"
-      >
+      <motion.div style={{ transform }} className="relative h-full w-full [transform-style:preserve-3d]">
         {/* the rest of the deck */}
         <div className="absolute inset-0 translate-x-4 translate-y-4 rotate-3 rounded-lg bg-[#E8ECF1]" />
         <div className="absolute inset-0 -translate-x-3 translate-y-2 -rotate-2 rounded-lg bg-[#F1F4F8]" />
         <motion.div
           animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={{ duration: 0.65, ease: [0.3, 0, 0.2, 1] }}
+          transition={{ duration: 0.6, ease: [0.3, 0, 0.2, 1] }}
           className="relative h-full w-full [transform-style:preserve-3d]"
         >
           <div className={face}>
-            <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">Q</p>
+            <div className="flex items-center justify-between">
+              <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">Question</p>
+              <p className="font-mono text-[10px] tracking-wide text-blue uppercase">{card.tag}</p>
+            </div>
             <p className="mt-3 font-display text-xl leading-snug font-semibold">{card.q}</p>
+            <p className="mt-auto font-mono text-[11px] text-[#9AA6B8]">tap to flip</p>
           </div>
           <div className={`${face} [transform:rotateY(180deg)]`}>
-            <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">A</p>
-            <p className="mt-3 text-lg leading-snug">{card.a}</p>
+            <div className="flex items-center justify-between">
+              <p className="font-mono text-[11px] tracking-wide text-[#9AA6B8] uppercase">Answer</p>
+              <p className="font-mono text-[10px] tracking-wide text-blue uppercase">{card.tag}</p>
+            </div>
+            <p className="mt-3 text-base leading-snug">{card.a}</p>
             <p className="mt-auto self-start rounded border border-edge bg-[#F1F4F8] px-2 py-0.5 font-mono text-[11px] text-[#5B6B80]">
               source: your PDF, p.{card.page}
             </p>
